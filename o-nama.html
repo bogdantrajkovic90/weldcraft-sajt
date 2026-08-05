@@ -57,8 +57,17 @@
   .page-header h1{font-size:clamp(30px,5vw,44px); margin:0 0 14px;}
   .page-header p{color:var(--text-dim); font-size:15px; line-height:1.7; max-width:560px; margin:0 auto;}
 
-  main{max-width:700px; margin:0 auto; padding:8px 24px 96px; text-align:center;}
-  .placeholder-box{border:1px dashed var(--border); border-radius:10px; padding:56px 28px; font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-dim); line-height:1.8;}
+  main{max-width:700px; margin:0 auto; padding:8px 24px 96px;}
+  .about-lead{font-family:'Oswald',sans-serif; font-size:22px; font-weight:600; text-align:center; margin:0 0 48px; color:var(--text);}
+  .about-block{margin-bottom:36px;}
+  .about-block h2{font-size:13px; text-transform:uppercase; letter-spacing:.6px; color:var(--accent); font-family:'IBM Plex Mono',monospace; font-weight:600; margin:0 0 10px;}
+  .about-block p{font-size:15px; line-height:1.8; color:var(--text-dim); margin:0;}
+
+  .table-draw{display:block; margin:0 auto 8px; width:100%; max-width:380px; height:auto; overflow:visible;}
+  .table-draw .plate{fill:none; stroke:var(--accent); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1148; stroke-dashoffset:1148; animation:drawPlate 1.05s ease forwards;}
+  .table-draw .tblhole{fill:var(--accent); opacity:0; animation:holeAppear .35s ease forwards; transform-box:fill-box; transform-origin:center;}
+  @keyframes drawPlate{ to{ stroke-dashoffset:0; } }
+  @keyframes holeAppear{ from{ opacity:0; transform:scale(.3); } to{ opacity:1; transform:scale(1); } }
 
   footer{border-top:1px solid var(--border); padding:40px 24px 32px;}
   .footer-inner{max-width:1440px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px; align-items:center;}
@@ -123,14 +132,80 @@
 </header>
 
 <div class="page-header">
+  <svg class="table-draw" viewBox="0 0 361 258" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect class="plate" x="15" y="15" width="331" height="213" rx="8"/>
+    <circle cx="50" cy="55" r="3.4" class="tblhole" style="animation-delay:1.050s"/>
+          <circle cx="82" cy="55" r="3.4" class="tblhole" style="animation-delay:1.074s"/>
+          <circle cx="114" cy="55" r="3.4" class="tblhole" style="animation-delay:1.099s"/>
+          <circle cx="146" cy="55" r="3.4" class="tblhole" style="animation-delay:1.123s"/>
+          <circle cx="178" cy="55" r="3.4" class="tblhole" style="animation-delay:1.148s"/>
+          <circle cx="210" cy="55" r="3.4" class="tblhole" style="animation-delay:1.172s"/>
+          <circle cx="242" cy="55" r="3.4" class="tblhole" style="animation-delay:1.197s"/>
+          <circle cx="274" cy="55" r="3.4" class="tblhole" style="animation-delay:1.221s"/>
+          <circle cx="306" cy="55" r="3.4" class="tblhole" style="animation-delay:1.246s"/>
+          <circle cx="50" cy="87" r="3.4" class="tblhole" style="animation-delay:1.270s"/>
+          <circle cx="82" cy="87" r="3.4" class="tblhole" style="animation-delay:1.294s"/>
+          <circle cx="114" cy="87" r="3.4" class="tblhole" style="animation-delay:1.319s"/>
+          <circle cx="146" cy="87" r="3.4" class="tblhole" style="animation-delay:1.343s"/>
+          <circle cx="178" cy="87" r="3.4" class="tblhole" style="animation-delay:1.368s"/>
+          <circle cx="210" cy="87" r="3.4" class="tblhole" style="animation-delay:1.392s"/>
+          <circle cx="242" cy="87" r="3.4" class="tblhole" style="animation-delay:1.417s"/>
+          <circle cx="274" cy="87" r="3.4" class="tblhole" style="animation-delay:1.441s"/>
+          <circle cx="306" cy="87" r="3.4" class="tblhole" style="animation-delay:1.466s"/>
+          <circle cx="50" cy="119" r="3.4" class="tblhole" style="animation-delay:1.490s"/>
+          <circle cx="82" cy="119" r="3.4" class="tblhole" style="animation-delay:1.514s"/>
+          <circle cx="114" cy="119" r="3.4" class="tblhole" style="animation-delay:1.539s"/>
+          <circle cx="146" cy="119" r="3.4" class="tblhole" style="animation-delay:1.563s"/>
+          <circle cx="178" cy="119" r="3.4" class="tblhole" style="animation-delay:1.588s"/>
+          <circle cx="210" cy="119" r="3.4" class="tblhole" style="animation-delay:1.612s"/>
+          <circle cx="242" cy="119" r="3.4" class="tblhole" style="animation-delay:1.637s"/>
+          <circle cx="274" cy="119" r="3.4" class="tblhole" style="animation-delay:1.661s"/>
+          <circle cx="306" cy="119" r="3.4" class="tblhole" style="animation-delay:1.686s"/>
+          <circle cx="50" cy="151" r="3.4" class="tblhole" style="animation-delay:1.710s"/>
+          <circle cx="82" cy="151" r="3.4" class="tblhole" style="animation-delay:1.734s"/>
+          <circle cx="114" cy="151" r="3.4" class="tblhole" style="animation-delay:1.759s"/>
+          <circle cx="146" cy="151" r="3.4" class="tblhole" style="animation-delay:1.783s"/>
+          <circle cx="178" cy="151" r="3.4" class="tblhole" style="animation-delay:1.808s"/>
+          <circle cx="210" cy="151" r="3.4" class="tblhole" style="animation-delay:1.832s"/>
+          <circle cx="242" cy="151" r="3.4" class="tblhole" style="animation-delay:1.857s"/>
+          <circle cx="274" cy="151" r="3.4" class="tblhole" style="animation-delay:1.881s"/>
+          <circle cx="306" cy="151" r="3.4" class="tblhole" style="animation-delay:1.906s"/>
+          <circle cx="50" cy="183" r="3.4" class="tblhole" style="animation-delay:1.930s"/>
+          <circle cx="82" cy="183" r="3.4" class="tblhole" style="animation-delay:1.954s"/>
+          <circle cx="114" cy="183" r="3.4" class="tblhole" style="animation-delay:1.979s"/>
+          <circle cx="146" cy="183" r="3.4" class="tblhole" style="animation-delay:2.003s"/>
+          <circle cx="178" cy="183" r="3.4" class="tblhole" style="animation-delay:2.028s"/>
+          <circle cx="210" cy="183" r="3.4" class="tblhole" style="animation-delay:2.052s"/>
+          <circle cx="242" cy="183" r="3.4" class="tblhole" style="animation-delay:2.077s"/>
+          <circle cx="274" cy="183" r="3.4" class="tblhole" style="animation-delay:2.101s"/>
+          <circle cx="306" cy="183" r="3.4" class="tblhole" style="animation-delay:2.126s"/>
+  </svg>
   <span class="eyebrow">O FIRMI</span>
   <h1>O nama</h1>
-  <p>Ovde uskoro dolazi priča o WeldCraft-u — ko smo, otkad radimo, i zašto su naši stolovi i pribor izbor profesionalaca.</p>
+  <p>Alat koji radi onoliko precizno koliko i vi.</p>
 </div>
 
 <main>
-  <div class="placeholder-box">
-    Sadržaj stranice (istorija firme, tim, sertifikati, proizvodni pogon...) dodaje se u sledećoj fazi.
+  <p class="about-lead">WeldCraft stolovi za zavarivanje nisu samo radna površina — to je sistem koji direktno utiče na to koliko brzo, tačno i bezbedno završavate posao.</p>
+
+  <div class="about-block">
+    <h2>Modularna preciznost</h2>
+    <p>Mreža rupa (D16 / D22 / D28) omogućava da svaki komad materijala fiksirate tačno tamo gde treba, bez ponovnog merenja za svaki novi projekat. Sistem je isti, projekat se menja — ne obrnuto.</p>
+  </div>
+
+  <div class="about-block">
+    <h2>Manje podešavanja, više rada</h2>
+    <p>Naš pribor — od uglomera do brzih stega — projektovan je da se kombinuje bez prilagođavanja. Prelazak sa jednog projekta na drugi traje minute, ne sate, jer ne gubite vreme na pozicioniranje i stezanje.</p>
+  </div>
+
+  <div class="about-block">
+    <h2>Tolerancije kojima verujete</h2>
+    <p>Stolovi su izrađeni od čelika ili livenog gvožđa, sa tolerancijama koje garantuju da ono što izmerite na papiru bude isto ono što dobijete na radnom stolu — bez naknadnog "štelovanja" konstrukcije.</p>
+  </div>
+
+  <div class="about-block">
+    <h2>Raste sa vama</h2>
+    <p>Bilo da radite u maloj radionici ili industrijskoj proizvodnji, WeldCraft sistem raste sa vama — dodajete module, ne menjate ceo sto.</p>
   </div>
 </main>
 
