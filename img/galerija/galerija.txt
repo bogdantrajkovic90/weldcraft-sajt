@@ -8,3 +8,4 @@
 # Primer (ukloni # ispred da aktiviraš):
 # radionica-1.jpg
 # projekat-kupca-2.jpg
+test slika.png
