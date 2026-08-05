@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var t=localStorage.getItem('weldcraft-theme'); if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;}}catch(e){}})();</script>
 <title>WeldCraft — Stolovi za zavarivanje &amp; pribor za stezanje</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -42,6 +43,8 @@
   nav.main-nav a{text-decoration:none; color:var(--text-dim); transition:all .2s; padding:6px 12px; border-radius:5px; border:1px solid transparent;}
   nav.main-nav a:hover{color:var(--text);}
   nav.main-nav a.active{color:var(--text); border-color:var(--accent); background:var(--accent-ink);}
+  .hamburger-btn{display:none;}
+  .mobile-nav-panel{display:none;}
   .header-actions{display:flex; align-items:center; gap:14px;}
   .header-search, .header-wishlist{position:relative;}
   .icon-btn{position:relative; width:40px; height:40px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .2s;}
@@ -227,18 +230,6 @@
   .modal-actions{display:flex; gap:10px; margin-top:6px;}
   .modal-actions .btn{flex:1; justify-content:center;}
 
-  /* ---------- GALLERY ---------- */
-  .gallery-section{
-    max-width:1440px; margin:0 auto; padding:64px 24px; text-align:center; scroll-margin-top:150px;
-    background-image: radial-gradient(circle, var(--dot) 1.6px, transparent 1.6px); background-size:28px 28px;
-  }
-  .gallery-inner{max-width:560px; margin:0 auto;}
-  .gallery-inner h2{font-size:28px; margin:0 0 12px;}
-  .gallery-inner p{color:var(--text-dim); font-size:14.5px; line-height:1.7; margin:0;}
-  .gallery-grid{display:none; grid-template-columns:repeat(4,1fr); gap:14px; max-width:1100px; margin:32px auto 0;}
-  .gallery-item{aspect-ratio:1/1; border-radius:8px; overflow:hidden; border:1px solid var(--border); background:var(--surface-2);}
-  .gallery-item img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s ease;}
-  .gallery-item:hover img{transform:scale(1.05);}
 
   /* ---------- CONTACT ---------- */
   .contact-section{max-width:1440px; margin:0 auto; padding:72px 24px 96px;}
@@ -275,14 +266,27 @@
 
   @media (max-width:1150px){ main.layout{grid-template-columns:1fr;} .sidebar-tree, .cart-panel{position:static; max-height:none;} }
   @media (max-width:900px){
-    .gallery-grid{grid-template-columns:repeat(2,1fr);}
     nav.main-nav{display:none;}
+    .hamburger-btn{display:flex;}
+    .mobile-nav-panel{
+      display:flex; flex-direction:column; position:absolute; top:80px; left:0; right:0; background:var(--bg);
+      border-bottom:1px solid var(--border); box-shadow:var(--shadow); padding:8px 24px 16px;
+      max-height:0; overflow:hidden; transition:max-height .25s ease; z-index:45;
+    }
+    .mobile-nav-panel.open{max-height:320px;}
+    .mobile-nav-panel a{
+      text-decoration:none; color:var(--text); font-family:'Oswald',sans-serif; font-weight:600;
+      text-transform:uppercase; letter-spacing:.4px; font-size:15px; padding:14px 4px; border-bottom:1px solid var(--border);
+    }
+    .mobile-nav-panel a:last-child{border-bottom:none;}
+    .header-search, .header-wishlist{display:none;}
     .contact-grid{grid-template-columns:1fr;}
     .form-row{grid-template-columns:1fr;}
     .systems-strip{max-width:100%;}
     .modal-box{grid-template-columns:1fr;}
     .modal-viewer{border-right:none; border-bottom:1px solid var(--border); border-radius:12px 12px 0 0; height:260px; max-height:260px;}
     .product-grid{grid-template-columns:1fr;}
+    .flyout-panel{width:calc(100vw - 48px); right:-10px;}
   }
 
   /* ---------- LOADING SCREEN ---------- */
@@ -336,14 +340,17 @@
       </svg>
       <span class="brand-text">Weld<span class="brand-accent">Craft</span></span>
     </a>
-    <nav class="main-nav">
+    <nav class="main-nav" id="mainNav">
       <a href="#pocetna">Početna</a>
       <a href="#stolovi">Proizvodi</a>
-      <a href="#galerija">Galerija</a>
-      <a href="#o-nama">O nama</a>
+      <a href="galerija.html">Galerija</a>
+      <a href="o-nama.html">O nama</a>
       <a href="#ponuda">Kontakt</a>
     </nav>
     <div class="header-actions">
+      <button class="icon-btn hamburger-btn" id="hamburgerBtn" aria-label="Meni">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
       <div class="header-search" id="headerSearch">
         <button class="icon-btn" id="searchToggleBtn" aria-label="Pretraga">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -369,6 +376,13 @@
       <a href="#ponuda" class="btn btn-accent">Zatraži ponudu</a>
     </div>
   </div>
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="#pocetna">Početna</a>
+    <a href="#stolovi">Proizvodi</a>
+    <a href="galerija.html">Galerija</a>
+    <a href="o-nama.html">O nama</a>
+    <a href="#ponuda">Kontakt</a>
+  </div>
 </header>
 
 <section class="hero" id="pocetna">
@@ -393,15 +407,6 @@
   <div id="catalog"></div>
   <aside class="cart-panel" id="cartPanel"></aside>
 </main>
-
-<section class="gallery-section" id="galerija">
-  <div class="gallery-inner">
-    <span class="eyebrow">REALIZACIJE</span>
-    <h2>Galerija realizacija</h2>
-    <p id="galleryPlaceholderText">Uskoro dodajemo fotografije naših kupaca i njihovih projekata — stolove i opremu u radu, u pravim radionicama.</p>
-  </div>
-  <div class="gallery-grid" id="galleryGrid"></div>
-</section>
 
 <section class="contact-section" id="ponuda">
   <div class="contact-grid">
@@ -610,13 +615,38 @@ const navObserver = new IntersectionObserver((entries)=>{
 const themeToggle = document.getElementById('themeToggle');
 const iconSun = document.getElementById('iconSun');
 const iconMoon = document.getElementById('iconMoon');
+(function syncThemeIcons(){
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  iconSun.style.display = isDark ? 'block' : 'none';
+  iconMoon.style.display = isDark ? 'none' : 'block';
+})();
 themeToggle.addEventListener('click', ()=>{
   const html = document.documentElement;
   const isDark = html.dataset.theme === 'dark';
-  html.dataset.theme = isDark ? 'light' : 'dark';
+  const next = isDark ? 'light' : 'dark';
+  html.dataset.theme = next;
   iconSun.style.display = isDark ? 'none' : 'block';
   iconMoon.style.display = isDark ? 'block' : 'none';
+  try{ localStorage.setItem('weldcraft-theme', next); }catch(e){}
 });
+
+/* ---------- MOBILE NAV (hamburger) ---------- */
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const mobileNavPanel = document.getElementById('mobileNavPanel');
+if(hamburgerBtn){
+  hamburgerBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    mobileNavPanel.classList.toggle('open');
+  });
+  mobileNavPanel.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=>mobileNavPanel.classList.remove('open'));
+  });
+  document.addEventListener('click', (e)=>{
+    if(!mobileNavPanel.contains(e.target) && e.target !== hamburgerBtn && !hamburgerBtn.contains(e.target)){
+      mobileNavPanel.classList.remove('open');
+    }
+  });
+}
 
 /* ---------- SYSTEM FILTER ---------- */
 const sysButtons = document.querySelectorAll('.sys-btn');
@@ -1114,19 +1144,6 @@ document.getElementById('quoteForm').addEventListener('submit', (e)=>{
   showToast('Upit poslat (demo)');
   e.target.reset();
 });
-
-/* ---------- GALLERY LOADER ---------- */
-fetch('img/galerija/galerija.txt')
-  .then(r=>{ if(!r.ok) throw new Error('no file'); return r.text(); })
-  .then(text=>{
-    const files = text.split('\n').map(l=>l.trim()).filter(l=>l && !l.startsWith('#'));
-    if(files.length === 0) return;
-    const grid = document.getElementById('galleryGrid');
-    grid.innerHTML = files.map(f=>`<div class="gallery-item"><img src="img/galerija/${f}" alt="Realizacija" loading="lazy"></div>`).join('');
-    grid.style.display = 'grid';
-    document.getElementById('galleryPlaceholderText').style.display = 'none';
-  })
-  .catch(()=>{ /* nema slika još (ili lokalno testiranje bez servera) — ostaje placeholder tekst */ });
 
 /* ---------- HERO INTERACTIVE DOT GLOW ---------- */
 (function(){
