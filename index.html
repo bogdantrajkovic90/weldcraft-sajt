@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>(function(){try{var t=localStorage.getItem('weldcraft-theme'); if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;}}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('weldcraft-theme'); if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;}else{var h=new Date().getHours(); document.documentElement.dataset.theme=(h>=18||h<6)?'dark':'light';}}catch(e){}})();</script>
 <title>WeldCraft — Stolovi za zavarivanje &amp; pribor za stezanje</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -70,9 +70,20 @@
   .flyout-item-remove{position:absolute; top:6px; right:6px; width:20px; height:20px; border:none; background:none; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center;}
   .flyout-item-remove:hover{color:var(--accent);}
   .flyout-item-remove svg{width:12px;height:12px;}
-  .theme-toggle{width:40px; height:40px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .2s;}
+  .theme-toggle{width:40px; height:40px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .25s ease, border-color .2s; overflow:hidden;}
   .theme-toggle:hover{border-color:var(--accent);}
-  .theme-toggle svg{width:18px;height:18px;}
+  :root[data-theme="light"] .theme-toggle{background:#1B1D20; border-color:#1B1D20;}
+  :root[data-theme="dark"] .theme-toggle{background:#FFFFFF; border-color:#FFFFFF;}
+  .theme-icon-stage{position:relative; width:18px; height:18px; display:block;}
+  .theme-icon-stage svg{position:absolute; inset:0; width:18px; height:18px; opacity:0; transform:scale(.4) rotate(-60deg); transition:opacity .35s ease, transform .35s cubic-bezier(.34,1.56,.64,1);}
+  :root[data-theme="light"] .icon-moon{opacity:1; transform:scale(1) rotate(0deg);}
+  :root[data-theme="dark"] .icon-sun{opacity:1; transform:scale(1) rotate(0deg);}
+  @keyframes themeFlash{
+    0%{ filter:drop-shadow(0 0 0 transparent); }
+    45%{ filter:drop-shadow(0 0 7px #FFB733); }
+    100%{ filter:drop-shadow(0 0 0 transparent); }
+  }
+  .theme-toggle.flashing .theme-icon-stage svg{ animation:themeFlash .55s ease; }
   .btn{display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:6px; font-family:'Oswald',sans-serif; font-weight:600; font-size:14px; letter-spacing:.4px; text-transform:uppercase; text-decoration:none; cursor:pointer; border:1px solid transparent; transition:all .2s ease;}
   .btn-accent{background:var(--accent); color:#fff;}
   .btn-accent:hover{filter:brightness(1.08); transform:translateY(-1px);}
@@ -352,15 +363,6 @@
       padding:8px 4px; border-bottom:1px dashed var(--border); text-transform:none; letter-spacing:0; font-weight:400;
     }
     .mobile-subcat-list a:last-child{border-bottom:none;}
-    .subnav-wrap{display:none;}
-    .mobile-cat-rail{
-      display:flex; flex-direction:column; gap:6px; position:fixed; left:8px; top:50%; transform:translateY(-50%);
-      z-index:35; background:var(--surface); border:1px solid var(--border); border-radius:22px; padding:8px 6px;
-      box-shadow:var(--shadow);
-    }
-    .mobile-cat-rail-item{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:none; border:1px solid transparent; color:var(--text-dim); cursor:pointer; transition:all .15s ease;}
-    .mobile-cat-rail-item svg{width:16px;height:16px;}
-    .mobile-cat-rail-item.active{background:var(--accent); border-color:var(--accent); color:#fff;}
   }
 
   /* ---------- LOADING SCREEN ---------- */
@@ -444,8 +446,25 @@
         </div>
       </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Promeni temu" title="Promeni temu">
-        <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/><path d="M19 3.5l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8" r="0.6" fill="currentColor" stroke="none"/></svg>
+        <span class="theme-icon-stage">
+          <svg class="icon-sun" id="iconSun" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="4.3" fill="#FFD23F" stroke="#1B1D20" stroke-width="1.3"/>
+            <g stroke="#1B1D20" stroke-width="1.8" stroke-linecap="round">
+              <path d="M12 2.5v2.4M12 19.1v2.4M4.5 4.5l1.7 1.7M17.8 17.8l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.5 19.5l1.7-1.7M17.8 6.2l1.7-1.7"/>
+            </g>
+          </svg>
+          <svg class="icon-moon" id="iconMoon" viewBox="0 0 24 24" fill="none">
+            <g transform="translate(2.5,2.5) scale(0.7)">
+              <path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" fill="#FFB733"/>
+            </g>
+            <path d="M20 3.4l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" fill="#fff"/>
+            <circle cx="3" cy="3" r="0.6" fill="#fff"/>
+            <circle cx="2" cy="12" r="0.55" fill="#fff"/>
+            <circle cx="21.5" cy="13" r="0.6" fill="#fff"/>
+            <circle cx="5" cy="20.5" r="0.5" fill="#fff"/>
+            <circle cx="18" cy="21" r="0.5" fill="#fff"/>
+          </svg>
+        </span>
       </button>
       <div class="header-cart" id="headerCart">
         <button class="icon-btn cart-icon-btn" id="cartToggleBtn" aria-label="Korpa" title="Korpa">
@@ -715,7 +734,11 @@ const sections = document.querySelectorAll('.cat-section');
 const observer = new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){
-      pills.forEach(p=>p.classList.toggle('active', p.dataset.target === entry.target.id));
+      pills.forEach(p=>{
+        const isActive = p.dataset.target === entry.target.id;
+        p.classList.toggle('active', isActive);
+        if(isActive) p.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+      });
       railItems.forEach(r=>r.classList.toggle('active', r.dataset.target === entry.target.id));
     }
   });
@@ -740,22 +763,29 @@ const navObserver = new IntersectionObserver((entries)=>{
 
 /* ---------- THEME TOGGLE ---------- */
 const themeToggle = document.getElementById('themeToggle');
-const iconSun = document.getElementById('iconSun');
-const iconMoon = document.getElementById('iconMoon');
-(function syncThemeIcons(){
-  const isDark = document.documentElement.dataset.theme === 'dark';
-  iconSun.style.display = isDark ? 'block' : 'none';
-  iconMoon.style.display = isDark ? 'none' : 'block';
-})();
 themeToggle.addEventListener('click', ()=>{
   const html = document.documentElement;
   const isDark = html.dataset.theme === 'dark';
   const next = isDark ? 'light' : 'dark';
   html.dataset.theme = next;
-  iconSun.style.display = isDark ? 'none' : 'block';
-  iconMoon.style.display = isDark ? 'block' : 'none';
+  themeToggle.classList.remove('flashing');
+  void themeToggle.offsetWidth; // restart animation
+  themeToggle.classList.add('flashing');
   try{ localStorage.setItem('weldcraft-theme', next); }catch(e){}
 });
+
+/* ---------- AUTO DAY/NIGHT THEME (only when no manual choice saved) ---------- */
+function applyAutoTheme(){
+  try{
+    if(localStorage.getItem('weldcraft-theme')) return; // user chose manually, never override
+  }catch(e){}
+  const h = new Date().getHours();
+  const autoTheme = (h >= 18 || h < 6) ? 'dark' : 'light';
+  if(document.documentElement.dataset.theme !== autoTheme){
+    document.documentElement.dataset.theme = autoTheme;
+  }
+}
+setInterval(applyAutoTheme, 5 * 60 * 1000);
 
 /* ---------- MOBILE NAV (hamburger) ---------- */
 const hamburgerBtn = document.getElementById('hamburgerBtn');
