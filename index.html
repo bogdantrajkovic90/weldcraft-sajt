@@ -62,12 +62,23 @@
     100%{ transform:scale(1) rotate(0deg); }
   }
   .cart-icon-btn.bouncing{ animation:cartBounce .5s ease; }
+  .cart-icon-btn::after{
+    content:''; position:absolute; top:4px; right:4px; width:6px; height:6px; border-radius:50%;
+    background:#fff; opacity:0; transform:scale(0); transition:all .25s ease;
+  }
+  .cart-icon-btn.has-items::after{
+    opacity:1; transform:scale(1); animation:cartPixelPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes cartPixelPulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(255,255,255,.7); }
+    50%{ box-shadow:0 0 0 3px rgba(255,255,255,0); }
+  }
   .flyout-cart-list{display:flex; flex-direction:column; gap:8px; margin-bottom:12px;}
   .cart-flyout-item{padding:8px;}
   .cart-icon-btn:hover{filter:brightness(1.08);}
   .cart-icon-btn .icon-badge{background:#fff; color:var(--accent);}
   .flyout-panel{position:absolute; top:calc(100% + 10px); right:0; width:340px; max-height:420px; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:14px; opacity:0; pointer-events:none; transform:translateY(-6px); transition:all .18s ease; z-index:60;}
-  .header-search.open .flyout-panel, .header-wishlist.open .flyout-panel{opacity:1; pointer-events:auto; transform:translateY(0);}
+  .header-search.open .flyout-panel, .header-wishlist.open .flyout-panel, .header-cart.open .flyout-panel{opacity:1; pointer-events:auto; transform:translateY(0);}
   .flyout-panel input{width:100%; background:var(--mono-bg); border:1px solid var(--border); border-radius:6px; padding:10px 12px; color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; outline:none; margin-bottom:10px;}
   .flyout-panel input:focus{border-color:var(--accent);}
   .flyout-results{display:flex; flex-direction:column; gap:6px; max-height:340px; overflow-y:auto;}
@@ -320,7 +331,7 @@
   .footer-links a:hover{color:var(--accent);}
   .footer-note{font-size:12px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
 
-  .toast{position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); z-index:100; background:var(--surface); border:1px solid var(--accent); color:var(--text); padding:14px 22px; border-radius:8px; font-size:14px; opacity:0; pointer-events:none; transition:all .3s ease; box-shadow:var(--shadow); display:flex; align-items:center; gap:10px;}
+  .toast{position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); z-index:250; background:var(--surface); border:1px solid var(--accent); color:var(--text); padding:14px 22px; border-radius:8px; font-size:14px; opacity:0; pointer-events:none; transition:all .3s ease; box-shadow:var(--shadow); display:flex; align-items:center; gap:10px;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
   .toast svg{width:16px;height:16px;color:var(--accent);}
 
@@ -835,7 +846,17 @@ const toastText = document.getElementById('toastText');
 function showToast(msg){ toastText.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2800); }
 
 /* ---------- CART ---------- */
-let cartItems = [];
+const CART_STORAGE_KEY = 'weldcraft-cart';
+function loadCart(){
+  try{
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveCart(){
+  try{ localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems)); }catch(e){}
+}
+let cartItems = loadCart();
 const cartPanel = document.getElementById('cartPanel');
 const cartBadge = document.getElementById('cartBadge');
 const cartFlyoutContent = document.getElementById('cartFlyoutContent');
@@ -846,6 +867,7 @@ function addToCart(item){
   const existing = cartItems.find(it=>it.code === item.code && it.legsName === item.legsName);
   if(existing){ existing.qty += item.qty; }
   else { cartItems.push(item); }
+  saveCart();
   renderCartPanel();
   renderCartFlyout();
   updateCartBadge();
@@ -853,6 +875,7 @@ function addToCart(item){
 }
 function removeFromCart(idx){
   cartItems.splice(idx, 1);
+  saveCart();
   renderCartPanel();
   renderCartFlyout();
   updateCartBadge();
@@ -861,6 +884,7 @@ function updateCartBadge(){
   const totalQty = cartItems.reduce((sum,it)=>sum+it.qty, 0);
   cartBadge.textContent = totalQty;
   cartBadge.style.display = totalQty > 0 ? 'flex' : 'none';
+  cartToggleBtn.classList.toggle('has-items', totalQty > 0);
 }
 function bounceCartIcon(){
   cartToggleBtn.classList.remove('bouncing');
@@ -935,6 +959,7 @@ function renderCartFlyout(){
   });
 }
 renderCartFlyout();
+updateCartBadge();
 
 cartToggleBtn.addEventListener('click', (e)=>{
   e.stopPropagation();
@@ -1447,6 +1472,18 @@ document.getElementById('quoteForm').addEventListener('submit', (e)=>{
   window.location.href = mailtoLink;
   showToast('Otvara se tvoj mejl klijent sa popunjenim upitom...');
 });
+
+/* ---------- PENDING QUOTE (set from galerija/o-nama pages) ---------- */
+(function checkPendingQuote(){
+  try{
+    const pending = localStorage.getItem('weldcraft-pending-quote');
+    if(pending){
+      document.querySelector('#quoteForm textarea').value = pending;
+      localStorage.removeItem('weldcraft-pending-quote');
+      setTimeout(()=>document.getElementById('ponuda').scrollIntoView({behavior:'smooth'}), 300);
+    }
+  }catch(e){}
+})();
 
 /* ---------- STICKY OFFSET SYNC (measures real header/subnav height, no guessing) ---------- */
 function syncHeaderOffsets(){
