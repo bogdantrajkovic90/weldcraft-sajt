@@ -104,7 +104,7 @@
   .sys-btn.active .sys-value{color:var(--accent);}
 
   /* ---------- SUBNAV ---------- */
-  .subnav-wrap{position:sticky; top:80px; z-index:40; background:var(--bg); border-bottom:1px solid var(--border);}
+  .subnav-wrap{position:sticky; top:var(--header-h, 80px); z-index:40; background:var(--bg); border-bottom:1px solid var(--border);}
   .subnav{max-width:1440px; margin:0 auto; padding:14px 24px; display:flex; gap:10px; overflow-x:auto; scrollbar-width:none;}
   .subnav::-webkit-scrollbar{display:none;}
   .pill{flex-shrink:0; display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:20px; border:1px solid var(--border); background:var(--surface); font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:.3px; text-decoration:none; color:var(--text-dim); transition:all .2s ease; white-space:nowrap;}
@@ -158,7 +158,7 @@
   .cart-submit svg{width:14px; height:14px; flex-shrink:0;}
 
   /* ---------- SECTIONS ---------- */
-  .cat-section{padding:0 0 64px; scroll-margin-top:150px; border-bottom:1px solid var(--border);}
+  .cat-section{padding:0 0 64px; scroll-margin-top:calc(var(--header-h, 80px) + var(--subnav-h, 62px) + 10px); border-bottom:1px solid var(--border);}
   .cat-section:last-child{border-bottom:none;}
   .cat-header{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:28px; flex-wrap:wrap;}
   .cat-title-group{display:flex; align-items:center; gap:16px;}
@@ -202,28 +202,51 @@
   .modal-catnav-item svg{width:15px; height:15px; flex-shrink:0;}
   .modal-catnav-item:hover{color:var(--text); background:var(--surface);}
   .modal-catnav-item.active{color:var(--accent); background:var(--accent-ink); border-color:var(--accent); font-weight:600;}
-  .modal-viewer{background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; padding:0; height:460px; max-height:460px; background-image: radial-gradient(circle, var(--dot) 1.6px, transparent 1.6px); background-size:24px 24px; position:relative; overflow:hidden;}
+  .modal-viewer{background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; padding:0; height:600px; max-height:600px; background-image: radial-gradient(circle, var(--dot) 1.6px, transparent 1.6px); background-size:24px 24px; position:relative; overflow:hidden;}
   .modal-viewer.has-image{background-image:none; background:#fff;}
   .modal-viewer img.main-image{width:100%; height:100%; object-fit:contain; padding:40px;}
   .viewer-3d-container{width:100%; height:100%; min-height:340px; position:relative;}
   .viewer-3d-container canvas{display:block;}
   .viewer-3d-hint{position:absolute; bottom:10px; left:0; right:0; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-dim); pointer-events:none;}
-  .modal-form-wrap{height:460px; max-height:460px; display:flex; flex-direction:column; position:relative; overflow:hidden;}
-  .modal-form-scroll{flex:1; overflow-y:auto; padding:28px; padding-bottom:14px; display:flex; flex-direction:column; gap:14px;}
-  .modal-footer-sticky{flex-shrink:0; padding:16px 28px; border-top:1px solid var(--border); background:var(--bg); display:flex; flex-direction:column; gap:12px;}
-  .modal-close{position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:6px; border:1px solid var(--accent); background:var(--accent-ink); color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:5;}
+  .modal-form-wrap{height:600px; max-height:600px; display:flex; flex-direction:column; position:relative; overflow:hidden;}
+  .modal-form-scroll{flex:1; overflow-y:auto; padding:28px; display:flex; flex-direction:column; gap:14px;}
+  .modal-icon-row{display:flex; justify-content:flex-end; gap:8px;}
+  .modal-icon-action{width:32px; height:32px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .modal-icon-action svg{width:15px;height:15px;}
+  .modal-icon-action:hover{border-color:var(--accent); color:var(--accent);}
+  .modal-icon-row .wishlist-btn{position:static; top:auto; right:auto; width:32px; height:32px; background:var(--surface); backdrop-filter:none; border:1px solid var(--border); color:var(--text-dim);}
+  .modal-icon-row .wishlist-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .modal-icon-row .wishlist-btn.active{color:#e6395c; border-color:#e6395c;}
+  .modal-close{border:1px solid var(--accent); background:var(--accent); color:var(--bg);}
   .modal-close:hover{filter:brightness(1.15);}
-  .modal-close svg{width:15px;height:15px;}
   .modal-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:.5px; margin:0;}
-  .modal-title{font-size:21px; font-weight:600; margin:2px 0 0; padding-right:30px;}
+  .modal-title{font-size:21px; font-weight:600; margin:2px 0 0;}
   .modal-title .num{color:var(--accent); margin-right:6px;}
-  .modal-code{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-dim); margin:0;}
-  .modal-code span{color:var(--accent); font-weight:600;}
+  .modal-dims{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-dim); margin:0;}
+  .modal-add-row{display:flex; gap:10px; align-items:flex-end;}
+  .modal-add-btn{flex:1; justify-content:center; white-space:nowrap; overflow:hidden;}
+  .modal-add-btn svg{width:14px; height:14px; flex-shrink:0;}
+  .add-label-full{display:inline;}
+  .add-label-short{display:none; align-items:center; gap:6px;}
+  .modal-qty-field{width:76px; flex-shrink:0;}
+  .modal-qty-field label{font-size:11.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; display:block; margin-bottom:6px;}
+  .modal-qty-field input{width:100%; background:var(--mono-bg); border:1px solid var(--border); border-radius:6px; padding:9px 8px; color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; outline:none;}
+  .modal-qty-field input:focus{border-color:var(--accent);}
+  .modal-specs{border-top:1px solid var(--border); padding-top:14px; margin-top:4px;}
+  .modal-specs h4{font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; font-weight:600; margin:0 0 10px;}
+  .modal-spec-row{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--border); font-size:13px;}
+  .modal-spec-row:last-child{border-bottom:none;}
+  .modal-spec-row span:first-child{color:var(--text-dim);}
+  .modal-spec-row span:last-child{font-family:'IBM Plex Mono',monospace; color:var(--accent); font-weight:600;}
   .modal-field{display:flex; flex-direction:column; gap:6px;}
   .modal-field label{font-size:11.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
   .modal-field select, .modal-field input[type="number"]{background:var(--mono-bg); border:1px solid var(--border); border-radius:6px; padding:11px 12px; color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; outline:none; cursor:pointer; width:100%;}
   .modal-field input[type="number"]{cursor:text; max-width:120px;}
   .modal-field select:focus, .modal-field input:focus{border-color:var(--accent);}
+  @media (max-width:480px){
+    .add-label-full{display:none;}
+    .add-label-short{display:inline-flex;}
+  }
   .cart-qty{color:var(--accent); font-family:'IBM Plex Mono',monospace; font-weight:700;}
   .variant-picker-row{display:flex; align-items:center; gap:10px;}
   .variant-picker-row select{flex:1;}
@@ -285,7 +308,7 @@
     .header-actions .btn-accent{height:36px; padding:0 14px; font-size:12px; white-space:nowrap; display:inline-flex; align-items:center;}
     .header-actions .hamburger-btn{display:flex;}
     .mobile-nav-panel{
-      display:flex; flex-direction:column; position:absolute; top:128px; left:0; right:0; background:var(--bg);
+      display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--bg);
       border-bottom:1px solid var(--border); box-shadow:var(--shadow); padding:8px 24px 16px;
       max-height:0; overflow:hidden; transition:max-height .25s ease; z-index:45;
     }
@@ -295,8 +318,8 @@
       text-transform:uppercase; letter-spacing:.4px; font-size:15px; padding:14px 4px; border-bottom:1px solid var(--border);
     }
     .mobile-nav-panel a:last-child{border-bottom:none;}
-    .subnav-wrap{top:128px;}
-    .cat-section{scroll-margin-top:196px;}
+    .subnav-wrap{top:var(--header-h, 128px);}
+    .cat-section{scroll-margin-top:calc(var(--header-h, 128px) + var(--subnav-h, 62px) + 10px);}
     .contact-grid{grid-template-columns:1fr;}
     .form-row{grid-template-columns:1fr;}
     .systems-strip{max-width:100%;}
@@ -407,7 +430,7 @@
       </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Promeni temu" title="Promeni temu">
         <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>
+        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/><path d="M19 3.5l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8" r="0.6" fill="currentColor" stroke="none"/></svg>
       </button>
       <div class="header-cart" id="headerCart">
         <button class="icon-btn cart-icon-btn" id="cartToggleBtn" aria-label="Korpa" title="Korpa">
@@ -522,7 +545,7 @@ const icons = {
   pdf: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/><path d="M9 14h1.5a1.5 1.5 0 000-3H9v6M13 17v-6h2M17 11v6M17 14h1.5"/></svg>`
 };
 
-const CATEGORIES = [{"id": "stolovi", "label": "3D stolovi za zavarivanje", "icon": "table", "subcats": [{"name": "3D liveni stolovi", "image": "img/1785877558490_image.png", "sizes": [{"code": "CWD281010", "dims": "1000×1000×200"}, {"code": "CWD281212", "dims": "1200×1200×200"}, {"code": "CWD281510", "dims": "1500×1000×200"}, {"code": "CWD281515", "dims": "1500×1500×200"}, {"code": "CWD282010", "dims": "2000×1000×200"}, {"code": "CWD282412", "dims": "2400×1200×200"}, {"code": "CWD283015", "dims": "3000×1500×200"}, {"code": "CWD283020", "dims": "3000×2000×200"}, {"code": "CWD284020", "dims": "4000×2000×200"}]}, {"name": "3D čelični stolovi", "image": "img/1785877567221_image.png", "sizes": [{"code": "SWD281010", "dims": "1000×1000×200"}, {"code": "SWD281212", "dims": "1200×1200×200"}, {"code": "SWD281510", "dims": "1500×1000×200"}, {"code": "SWD281515", "dims": "1500×1500×200"}, {"code": "SWD282010", "dims": "2000×1000×200"}, {"code": "SWD282412", "dims": "2400×1200×200"}, {"code": "SWD283015", "dims": "3000×1500×200"}, {"code": "SWD283020", "dims": "3000×2000×200"}, {"code": "SWD284020", "dims": "4000×2000×200"}]}, {"name": "3D čelični stolovi sa nitridmentom", "image": "img/1785877571615_image.png", "sizes": [{"code": "SWD281010P", "dims": "1000×1000×200"}, {"code": "SWD281212P", "dims": "1200×1200×200"}, {"code": "SWD281510P", "dims": "1500×1000×200"}, {"code": "SWD281515P", "dims": "1500×1500×200"}, {"code": "SWD282010P", "dims": "2000×1000×200"}, {"code": "SWD282412P", "dims": "2400×1200×200"}, {"code": "SWD283015P", "dims": "3000×1500×200"}, {"code": "SWD283020P", "dims": "3000×2000×200"}]}, {"name": "2D liveni stolovi", "image": "img/1785877575371_image.png", "sizes": [{"code": "CWD281010C", "dims": "1000×1000×150"}, {"code": "CWD281212C", "dims": "1200×1200×150"}, {"code": "CWD281510C", "dims": "1500×1000×150"}, {"code": "CWD281515C", "dims": "1500×1500×150"}, {"code": "CWD282010C", "dims": "2000×1000×150"}, {"code": "CWD282412C", "dims": "2400×1200×150"}, {"code": "CWD283015C", "dims": "3000×1500×150"}]}, {"name": "2D čelični stolovi", "image": "img/1785877642943_image.png", "sizes": [{"code": "SWD281010M", "dims": "1000×1000×150"}, {"code": "SWD281212M", "dims": "1200×1200×150"}, {"code": "SWD281510M", "dims": "1500×1000×150"}, {"code": "SWD281515M", "dims": "1500×1500×150"}, {"code": "SWD282010M", "dims": "2000×1000×150"}, {"code": "SWD282412M", "dims": "2400×1200×150"}, {"code": "SWD283015M", "dims": "3000×1500×150"}]}, {"name": "2D čelični stolovi sa nitridmentom", "image": "img/1785877647304_image.png", "sizes": [{"code": "SWD281010PN", "dims": "1000×1000×150"}, {"code": "SWD281212PN", "dims": "1200×1200×150"}, {"code": "SWD281510PN", "dims": "1500×1000×150"}, {"code": "SWD281515PN", "dims": "1500×1500×150"}, {"code": "SWD282010PN", "dims": "2000×1000×150"}, {"code": "SWD282412PN", "dims": "2400×1200×150"}, {"code": "SWD283015PN", "dims": "3000×1500×150"}]}, {"name": "3D osmostrani čelični stolovi", "image": "img/1785877653663_image.png", "sizes": [{"code": "SWT288080A", "dims": "800×800×200"}, {"code": "SWT281010A", "dims": "1000×1000×200"}, {"code": "SWT281212A", "dims": "1200×1200×200"}, {"code": "SWT281414A", "dims": "1400×1400×200"}]}]}, {"id": "nogari", "label": "Nogari", "icon": "leg", "subcats": [{"name": "Standardne noge", "image": "img/1785877736581_image.png", "sizes": [{"code": "TL200", "dims": "φ89×200"}, {"code": "TL350", "dims": "φ89×350"}, {"code": "TL450", "dims": "φ89×450"}, {"code": "TL620", "dims": "φ89×620"}]}, {"name": "Noge sa kočionim točkom", "image": "img/1785877739787_image.png", "sizes": [{"code": "TL200W", "dims": "φ89×200"}, {"code": "TL350W", "dims": "φ89×350"}, {"code": "TL450W", "dims": "φ89×450"}, {"code": "TL620W", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive tip A", "image": "img/1785877754706_image.png", "sizes": [{"code": "TL350A", "dims": "φ89×350"}, {"code": "TL450A", "dims": "φ89×450"}, {"code": "TL620A", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive tip B", "image": "img/1785877758394_image.png", "sizes": [{"code": "TL350B", "dims": "φ89×350"}, {"code": "TL450B", "dims": "φ89×450"}, {"code": "TL620B", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive sa točkom", "image": "img/1785877764264_image.png", "sizes": [{"code": "TL350C", "dims": "φ89×350"}, {"code": "TL450C", "dims": "φ89×450"}, {"code": "TL620C", "dims": "φ89×620"}]}, {"name": "Osnovne baze (ram konstrukcija)", "image": "img/1785877772300_image.png", "sizes": [{"code": "FSB1010", "dims": "1000×1000×400"}, {"code": "FSB1212", "dims": "1200×1200×400"}, {"code": "FSB1510", "dims": "1500×1000×400"}, {"code": "FSB1515", "dims": "1500×1500×400"}, {"code": "FSB2010", "dims": "2000×1000×400"}, {"code": "FSB2412", "dims": "2400×1200×400"}, {"code": "FSB3015", "dims": "3000×1500×400"}, {"code": "FSB3020", "dims": "3000×2000×400"}, {"code": "FSB4020", "dims": "4000×2000×400"}]}]}, {"id": "blokovi", "label": "Graničnici i blokovi", "icon": "block", "subcats": [{"name": "U-profil kutija", "image": "img/1785877784563_image.png", "sizes": [{"code": "US280500", "dims": "500×200×200"}, {"code": "US281000", "dims": "1000×200×200"}, {"code": "US281500", "dims": "1500×200×200"}, {"code": "US282000", "dims": "2000×200×200"}, {"code": "US283000", "dims": "3000×200×200"}]}, {"name": "L-profil kutija", "image": "img/1785877799594_image.png", "sizes": [{"code": "LS280500", "dims": "500×200×100"}, {"code": "LS281000", "dims": "1000×200×100"}, {"code": "LS281200", "dims": "1200×200×100"}, {"code": "LS281500", "dims": "1500×200×100"}, {"code": "LS282000", "dims": "2000×200×100"}]}, {"name": "Potporni ugaoni profili", "image": "img/1785877806978_image.png", "sizes": [{"code": "LA283001", "dims": "275×100×300, levo"}, {"code": "LA283002", "dims": "275×100×300, desno"}, {"code": "LA286001", "dims": "375×100×600, levo"}, {"code": "LA286002", "dims": "375×100×600, desno"}, {"code": "LA288001", "dims": "375×100×800, levo"}, {"code": "LA288002", "dims": "375×100×800, desno"}]}, {"name": "Ugaoni blokovi", "image": "img/1785877957873_image.png", "sizes": [{"code": "CM28200", "dims": "200×200×175"}]}, {"name": "Kutijasti blokovi", "image": "img/1785877968108_image.png", "sizes": [{"code": "CB28300", "dims": "300×200×100"}, {"code": "CB28500", "dims": "500×200×100"}]}, {"name": "Uglomer", "image": "img/1785878004194_image.png", "sizes": [{"code": "PTA28500", "dims": "500×100×100"}]}]}, {"id": "pozicioniranje", "label": "Delovi za pozicioniranje", "icon": "ruler", "subcats": [{"name": "L graničnik", "sizes": [{"code": "LAB281751751", "dims": "175×50×175 (hole/hole)", "image": "img/1785878207790_image.png"}, {"code": "LAB281751752", "dims": "175×50×175 (slot/slot)", "image": "img/1785878210595_image.png"}, {"code": "LAB281751753", "dims": "175×50×175 (hole/slot)", "image": "img/1785878221822_image.png"}, {"code": "LAB2817575", "dims": "175×50×75", "image": "img/1785878223134_image.png"}, {"code": "LAB287575", "dims": "75×50×75", "image": "img/1785878224367_image.png"}, {"code": "LAB28275175", "dims": "175×50×275", "image": "img/1785878225391_image.png"}]}, {"name": "Univerzalni graničnik", "sizes": [{"code": "US281001", "dims": "100×50×25", "image": "img/1785878564037_image.png"}, {"code": "US281002", "dims": "100×50×25", "image": "img/1785878565347_image.png"}, {"code": "US28150", "dims": "150×50×25", "image": "img/1785878566241_image.png"}, {"code": "US282251", "dims": "225×50×25", "image": "img/1785878567307_image.png"}, {"code": "US282252", "dims": "225×50×25", "image": "img/1785878568417_image.png"}, {"code": "US283001", "dims": "300×50×25", "image": "img/1785878612601_image.png"}, {"code": "US283002", "dims": "300×50×25", "image": "img/1785878613863_image.png"}, {"code": "US28500", "dims": "500×100×25", "image": "img/1785878614800_image.png"}, {"code": "US28800", "dims": "800×100×25", "image": "img/1785878616049_image.png"}, {"code": "US2810002", "dims": "1000×100×25", "image": "img/1785878617189_image.png"}]}, {"name": "Ugaoni graničnik", "sizes": [{"code": "PAL28250", "dims": "250×150×5", "image": "img/1785878660794_image.png"}]}, {"name": "Ravni L graničnik", "sizes": [{"code": "FAB28175", "dims": "175×175×25", "image": "img/1785878739515_image.png"}, {"code": "FAB282751", "dims": "275×175×25", "image": "img/1785878742531_image.png"}, {"code": "FAB282752", "dims": "275×225×25", "image": "img/1785878828450_image.png"}, {"code": "FAB28325", "dims": "325×225×25", "image": "img/1785878831616_image.png"}, {"code": "FAB28500", "dims": "500×375×25", "image": "img/1785878834484_image.png"}]}, {"name": "V graničnik", "sizes": [{"code": "VBL285890", "dims": "φ58×90°", "image": "img/1785878884908_image.png"}, {"code": "VBL2858120", "dims": "φ58×120°", "image": "img/1785878887450_image.png"}, {"code": "VBL28108120", "dims": "φ108×120°", "image": "img/1785878890021_image.png"}, {"code": "VBL2858150", "dims": "φ58×150°", "image": "img/1785878894265_image.png"}, {"code": "VBL28108150", "dims": "φ108×150°", "image": "img/1785878896103_image.png"}, {"code": "VBL28138150", "dims": "φ138×150°", "image": "img/1785878897626_image.png"}]}]}, {"id": "stezanje", "label": "Delovi za stezanje", "icon": "clamp", "subcats": [{"name": "Šraf stege", "sizes": [{"code": "SC283001", "dims": "180°, plastična ručka · 300×300", "image": "img/1785879027355_image.png"}, {"code": "SC283002", "dims": "180°, pokretna ručka · 300×300", "image": "img/1785879029260_image.png"}, {"code": "SC283003", "dims": "90°, plastična ručka · 300×150", "image": "img/1785879031845_image.png"}, {"code": "SC283004", "dims": "90°, pokretna ručka · 300×150", "image": "img/1785879033987_image.png"}, {"code": "SC283005", "dims": "45°, plastična ručka · 300×300", "image": "img/1785879035690_image.png"}, {"code": "SC283006", "dims": "45°, pokretna ručka · 300×300", "image": "img/1785879037226_image.png"}]}, {"name": "Kompenzacione stege", "sizes": [{"code": "CSC283001", "dims": "Plastična ručka · 300×150", "image": "img/1785880335308_image.png"}, {"code": "CSC283002", "dims": "Plastična ručka · 300×200", "image": "img/1785880350925_image.png"}, {"code": "CSC283003", "dims": "Pokretna ručka · 300×150", "image": "img/1785880353688_image.png"}, {"code": "CSC283004", "dims": "Pokretna ručka · 300×200", "image": "img/1785880353858_image.png"}]}, {"name": "Šraf tip stezanja", "sizes": [{"code": "STC283005", "dims": "300×300", "image": "img/1785880469466_image.png"}, {"code": "STC283005", "dims": "45°/90°, 195mm", "image": "img/1785880473275_image.png"}]}, {"name": "Brze stege", "sizes": [{"code": "TC2001001", "dims": "Disk vertikalna · φ58×20×28", "image": "img/1785880503438_image.png"}, {"code": "TC2001501", "dims": "Disk push-pull · φ68×20×28", "image": "img/1785880505305_image.png"}, {"code": "TC2001502", "dims": "Disk horizontalna · φ68×20×28", "image": "img/1785880507702_image.png"}, {"code": "TC2001002", "dims": "Kvadratna disk vertikalna · 130×65×25", "image": "img/1785880508743_image.png"}, {"code": "TC2001003", "dims": "Kvadratna disk push-pull · 130×65×25", "image": "img/1785880509763_image.png"}, {"code": "TC2001503", "dims": "Kvadratna disk horizontalna · 130×50×25", "image": "img/1785880510746_image.png"}]}, {"name": "Ugaone čaure", "sizes": [{"code": "CS281", "dims": "90°", "image": "img/1785880586189_image.png"}, {"code": "CS282", "dims": "45°", "image": "img/1785880587061_image.png"}, {"code": "CS283", "dims": "Paralelna · 180°", "image": "img/1785880588117_image.png"}, {"code": "CS284", "dims": "Vertikalna · 90°", "image": "img/1785880588945_image.png"}]}, {"name": "Ecentrične ploče", "sizes": [{"code": "ETL7525", "dims": "φ75×25", "image": "img/1785880610821_image.png"}, {"code": "ETL10025", "dims": "φ100×25", "image": "img/1785880611231_image.png"}]}, {"name": "Mostovi", "sizes": [{"code": "CB1701", "dims": "Dvotačni · 190×30×180°", "image": "img/1785880649166_image.png"}, {"code": "CB1702", "dims": "Trotačni · 90×30×120°", "image": "img/1785880650022_image.png"}]}]}, {"id": "pinovi", "label": "Zatezni pinovi", "icon": "pin", "subcats": [{"name": "Brzi pinovi", "image": "img/1785881020243_image.png", "sizes": [{"code": "RLB2824", "dims": "φ28×24"}, {"code": "RLB2850", "dims": "φ28×50"}, {"code": "RLB2875", "dims": "φ28×75"}]}, {"name": "Upušteni pinovi", "image": "img/1785880842015_image.png", "sizes": [{"code": "CHLB2850", "dims": "φ28×50"}, {"code": "CHLB2875", "dims": "φ28×75"}]}, {"name": "Upušteni brzi pinovi", "image": "img/1785881071162_image.png", "sizes": [{"code": "CHRLB2850", "dims": "φ28×50"}, {"code": "CHRLB2875", "dims": "φ28×75"}]}, {"name": "Pozicioni pin", "image": "img/1785881105715_image.png", "sizes": [{"code": "CHRLB2880", "dims": "φ40×φ28×80"}]}, {"name": "Brzi pin sa ručkom", "image": "img/1785881127195_image.png", "sizes": [{"code": "RLBH2850", "dims": "φ28×50"}]}, {"name": "Magnetni pin", "image": "img/1785881136837_image.png", "sizes": [{"code": "MLB2850", "dims": "φ28×50"}]}, {"name": "Povezujući pin", "image": "img/1785881149871_image.png", "sizes": [{"code": "CLB2850", "dims": "φ28×50"}]}]}, {"id": "pribor", "label": "Pribor", "icon": "wrench", "subcats": [{"name": "Regulator visine", "image": "img/1785881313778_image.png", "sizes": [{"code": "AS2880", "dims": "φ80×100"}]}, {"name": "Podizni prsten", "image": "img/1785881312734_image.png", "sizes": [{"code": "LR282", "dims": "2T nosivost"}]}, {"name": "Stezna cev", "image": "img/1785881311782_image.png", "sizes": [{"code": "CS28300", "dims": "φ28×300"}, {"code": "CS28600", "dims": "φ28×600"}]}, {"name": "Kolica za alat", "image": "img/1785881310762_image.png", "sizes": [{"code": "AC281000600", "dims": "1000×600×1025"}]}, {"name": "Uzemljivač", "image": "img/1785881309391_image.png", "sizes": [{"code": "GC28", "dims": "120×35"}]}, {"name": "Podloške", "image": "img/1785881307926_image.png", "sizes": [{"code": "S280520", "dims": "0.5–50 mm set"}]}, {"name": "Držač pištolja", "image": "img/1785881305638_image.png", "sizes": [{"code": "BH28200", "dims": "200 mm"}]}, {"name": "Imbus ključ", "image": "img/1785881303561_image.png", "sizes": [{"code": "HAW28", "dims": "150 mm"}]}, {"name": "Najlonska četka", "image": "img/1785881301504_image.png", "sizes": [{"code": "RB28", "dims": "φ30×210"}]}, {"name": "Brusni kamen", "image": "img/1785881299241_image.png", "sizes": [{"code": "BS28", "dims": "200×50×25"}]}, {"name": "Uljarica", "image": "img/1785881296788_image.png", "sizes": [{"code": "SB28", "dims": "200 ml"}]}]}];
+const CATEGORIES = [{"id": "stolovi", "label": "3D stolovi za zavarivanje", "icon": "table", "subcats": [{"name": "3D liveni stolovi", "image": "img/1785877558490_image.png", "sizes": [{"code": "CWD281010", "dims": "1000×1000×200"}, {"code": "CWD281212", "dims": "1200×1200×200"}, {"code": "CWD281510", "dims": "1500×1000×200"}, {"code": "CWD281515", "dims": "1500×1500×200"}, {"code": "CWD282010", "dims": "2000×1000×200"}, {"code": "CWD282412", "dims": "2400×1200×200"}, {"code": "CWD283015", "dims": "3000×1500×200"}, {"code": "CWD283020", "dims": "3000×2000×200"}, {"code": "CWD284020", "dims": "4000×2000×200"}]}, {"name": "3D čelični stolovi", "image": "img/1785877567221_image.png", "sizes": [{"code": "SWD281010", "dims": "1000×1000×200"}, {"code": "SWD281212", "dims": "1200×1200×200"}, {"code": "SWD281510", "dims": "1500×1000×200"}, {"code": "SWD281515", "dims": "1500×1500×200"}, {"code": "SWD282010", "dims": "2000×1000×200"}, {"code": "SWD282412", "dims": "2400×1200×200"}, {"code": "SWD283015", "dims": "3000×1500×200"}, {"code": "SWD283020", "dims": "3000×2000×200"}, {"code": "SWD284020", "dims": "4000×2000×200"}]}, {"name": "3D čelični stolovi - nitrirani", "image": "img/1785877571615_image.png", "sizes": [{"code": "SWD281010P", "dims": "1000×1000×200"}, {"code": "SWD281212P", "dims": "1200×1200×200"}, {"code": "SWD281510P", "dims": "1500×1000×200"}, {"code": "SWD281515P", "dims": "1500×1500×200"}, {"code": "SWD282010P", "dims": "2000×1000×200"}, {"code": "SWD282412P", "dims": "2400×1200×200"}, {"code": "SWD283015P", "dims": "3000×1500×200"}, {"code": "SWD283020P", "dims": "3000×2000×200"}]}, {"name": "2D liveni stolovi", "image": "img/1785877575371_image.png", "sizes": [{"code": "CWD281010C", "dims": "1000×1000×150"}, {"code": "CWD281212C", "dims": "1200×1200×150"}, {"code": "CWD281510C", "dims": "1500×1000×150"}, {"code": "CWD281515C", "dims": "1500×1500×150"}, {"code": "CWD282010C", "dims": "2000×1000×150"}, {"code": "CWD282412C", "dims": "2400×1200×150"}, {"code": "CWD283015C", "dims": "3000×1500×150"}]}, {"name": "2D čelični stolovi", "image": "img/1785877642943_image.png", "sizes": [{"code": "SWD281010M", "dims": "1000×1000×150"}, {"code": "SWD281212M", "dims": "1200×1200×150"}, {"code": "SWD281510M", "dims": "1500×1000×150"}, {"code": "SWD281515M", "dims": "1500×1500×150"}, {"code": "SWD282010M", "dims": "2000×1000×150"}, {"code": "SWD282412M", "dims": "2400×1200×150"}, {"code": "SWD283015M", "dims": "3000×1500×150"}]}, {"name": "2D čelični stolovi - nitrirani", "image": "img/1785877647304_image.png", "sizes": [{"code": "SWD281010PN", "dims": "1000×1000×150"}, {"code": "SWD281212PN", "dims": "1200×1200×150"}, {"code": "SWD281510PN", "dims": "1500×1000×150"}, {"code": "SWD281515PN", "dims": "1500×1500×150"}, {"code": "SWD282010PN", "dims": "2000×1000×150"}, {"code": "SWD282412PN", "dims": "2400×1200×150"}, {"code": "SWD283015PN", "dims": "3000×1500×150"}]}, {"name": "3D osmostrani čelični stolovi", "image": "img/1785877653663_image.png", "sizes": [{"code": "SWT288080A", "dims": "800×800×200"}, {"code": "SWT281010A", "dims": "1000×1000×200"}, {"code": "SWT281212A", "dims": "1200×1200×200"}, {"code": "SWT281414A", "dims": "1400×1400×200"}]}]}, {"id": "nogari", "label": "Nogari", "icon": "leg", "subcats": [{"name": "Standardne noge", "image": "img/1785877736581_image.png", "sizes": [{"code": "TL200", "dims": "φ89×200"}, {"code": "TL350", "dims": "φ89×350"}, {"code": "TL450", "dims": "φ89×450"}, {"code": "TL620", "dims": "φ89×620"}]}, {"name": "Noge sa kočionim točkom", "image": "img/1785877739787_image.png", "sizes": [{"code": "TL200W", "dims": "φ89×200"}, {"code": "TL350W", "dims": "φ89×350"}, {"code": "TL450W", "dims": "φ89×450"}, {"code": "TL620W", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive tip A", "image": "img/1785877754706_image.png", "sizes": [{"code": "TL350A", "dims": "φ89×350"}, {"code": "TL450A", "dims": "φ89×450"}, {"code": "TL620A", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive tip B", "image": "img/1785877758394_image.png", "sizes": [{"code": "TL350B", "dims": "φ89×350"}, {"code": "TL450B", "dims": "φ89×450"}, {"code": "TL620B", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive sa točkom", "image": "img/1785877764264_image.png", "sizes": [{"code": "TL350C", "dims": "φ89×350"}, {"code": "TL450C", "dims": "φ89×450"}, {"code": "TL620C", "dims": "φ89×620"}]}, {"name": "Osnovne baze (ram konstrukcija)", "image": "img/1785877772300_image.png", "sizes": [{"code": "FSB1010", "dims": "1000×1000×400"}, {"code": "FSB1212", "dims": "1200×1200×400"}, {"code": "FSB1510", "dims": "1500×1000×400"}, {"code": "FSB1515", "dims": "1500×1500×400"}, {"code": "FSB2010", "dims": "2000×1000×400"}, {"code": "FSB2412", "dims": "2400×1200×400"}, {"code": "FSB3015", "dims": "3000×1500×400"}, {"code": "FSB3020", "dims": "3000×2000×400"}, {"code": "FSB4020", "dims": "4000×2000×400"}]}]}, {"id": "blokovi", "label": "Graničnici i blokovi", "icon": "block", "subcats": [{"name": "U-profil kutija", "image": "img/1785877784563_image.png", "sizes": [{"code": "US280500", "dims": "500×200×200"}, {"code": "US281000", "dims": "1000×200×200"}, {"code": "US281500", "dims": "1500×200×200"}, {"code": "US282000", "dims": "2000×200×200"}, {"code": "US283000", "dims": "3000×200×200"}]}, {"name": "L-profil kutija", "image": "img/1785877799594_image.png", "sizes": [{"code": "LS280500", "dims": "500×200×100"}, {"code": "LS281000", "dims": "1000×200×100"}, {"code": "LS281200", "dims": "1200×200×100"}, {"code": "LS281500", "dims": "1500×200×100"}, {"code": "LS282000", "dims": "2000×200×100"}]}, {"name": "Potporni ugaoni profili", "image": "img/1785877806978_image.png", "sizes": [{"code": "LA283001", "dims": "275×100×300, levo"}, {"code": "LA283002", "dims": "275×100×300, desno"}, {"code": "LA286001", "dims": "375×100×600, levo"}, {"code": "LA286002", "dims": "375×100×600, desno"}, {"code": "LA288001", "dims": "375×100×800, levo"}, {"code": "LA288002", "dims": "375×100×800, desno"}]}, {"name": "Ugaoni blokovi", "image": "img/1785877957873_image.png", "sizes": [{"code": "CM28200", "dims": "200×200×175"}]}, {"name": "Kutijasti blokovi", "image": "img/1785877968108_image.png", "sizes": [{"code": "CB28300", "dims": "300×200×100"}, {"code": "CB28500", "dims": "500×200×100"}]}, {"name": "Uglomer", "image": "img/1785878004194_image.png", "sizes": [{"code": "PTA28500", "dims": "500×100×100"}]}]}, {"id": "pozicioniranje", "label": "Delovi za pozicioniranje", "icon": "ruler", "subcats": [{"name": "L graničnik", "sizes": [{"code": "LAB281751751", "dims": "175×50×175 (hole/hole)", "image": "img/1785878207790_image.png"}, {"code": "LAB281751752", "dims": "175×50×175 (slot/slot)", "image": "img/1785878210595_image.png"}, {"code": "LAB281751753", "dims": "175×50×175 (hole/slot)", "image": "img/1785878221822_image.png"}, {"code": "LAB2817575", "dims": "175×50×75", "image": "img/1785878223134_image.png"}, {"code": "LAB287575", "dims": "75×50×75", "image": "img/1785878224367_image.png"}, {"code": "LAB28275175", "dims": "175×50×275", "image": "img/1785878225391_image.png"}]}, {"name": "Univerzalni graničnik", "sizes": [{"code": "US281001", "dims": "100×50×25", "image": "img/1785878564037_image.png"}, {"code": "US281002", "dims": "100×50×25", "image": "img/1785878565347_image.png"}, {"code": "US28150", "dims": "150×50×25", "image": "img/1785878566241_image.png"}, {"code": "US282251", "dims": "225×50×25", "image": "img/1785878567307_image.png"}, {"code": "US282252", "dims": "225×50×25", "image": "img/1785878568417_image.png"}, {"code": "US283001", "dims": "300×50×25", "image": "img/1785878612601_image.png"}, {"code": "US283002", "dims": "300×50×25", "image": "img/1785878613863_image.png"}, {"code": "US28500", "dims": "500×100×25", "image": "img/1785878614800_image.png"}, {"code": "US28800", "dims": "800×100×25", "image": "img/1785878616049_image.png"}, {"code": "US2810002", "dims": "1000×100×25", "image": "img/1785878617189_image.png"}]}, {"name": "Ugaoni graničnik", "sizes": [{"code": "PAL28250", "dims": "250×150×5", "image": "img/1785878660794_image.png"}]}, {"name": "Ravni L graničnik", "sizes": [{"code": "FAB28175", "dims": "175×175×25", "image": "img/1785878739515_image.png"}, {"code": "FAB282751", "dims": "275×175×25", "image": "img/1785878742531_image.png"}, {"code": "FAB282752", "dims": "275×225×25", "image": "img/1785878828450_image.png"}, {"code": "FAB28325", "dims": "325×225×25", "image": "img/1785878831616_image.png"}, {"code": "FAB28500", "dims": "500×375×25", "image": "img/1785878834484_image.png"}]}, {"name": "V graničnik", "sizes": [{"code": "VBL285890", "dims": "φ58×90°", "image": "img/1785878884908_image.png"}, {"code": "VBL2858120", "dims": "φ58×120°", "image": "img/1785878887450_image.png"}, {"code": "VBL28108120", "dims": "φ108×120°", "image": "img/1785878890021_image.png"}, {"code": "VBL2858150", "dims": "φ58×150°", "image": "img/1785878894265_image.png"}, {"code": "VBL28108150", "dims": "φ108×150°", "image": "img/1785878896103_image.png"}, {"code": "VBL28138150", "dims": "φ138×150°", "image": "img/1785878897626_image.png"}]}]}, {"id": "stezanje", "label": "Delovi za stezanje", "icon": "clamp", "subcats": [{"name": "Šraf stege", "sizes": [{"code": "SC283001", "dims": "180°, plastična ručka · 300×300", "image": "img/1785879027355_image.png"}, {"code": "SC283002", "dims": "180°, pokretna ručka · 300×300", "image": "img/1785879029260_image.png"}, {"code": "SC283003", "dims": "90°, plastična ručka · 300×150", "image": "img/1785879031845_image.png"}, {"code": "SC283004", "dims": "90°, pokretna ručka · 300×150", "image": "img/1785879033987_image.png"}, {"code": "SC283005", "dims": "45°, plastična ručka · 300×300", "image": "img/1785879035690_image.png"}, {"code": "SC283006", "dims": "45°, pokretna ručka · 300×300", "image": "img/1785879037226_image.png"}]}, {"name": "Kompenzacione stege", "sizes": [{"code": "CSC283001", "dims": "Plastična ručka · 300×150", "image": "img/1785880335308_image.png"}, {"code": "CSC283002", "dims": "Plastična ručka · 300×200", "image": "img/1785880350925_image.png"}, {"code": "CSC283003", "dims": "Pokretna ručka · 300×150", "image": "img/1785880353688_image.png"}, {"code": "CSC283004", "dims": "Pokretna ručka · 300×200", "image": "img/1785880353858_image.png"}]}, {"name": "Šraf tip stezanja", "sizes": [{"code": "STC283005", "dims": "300×300", "image": "img/1785880469466_image.png"}, {"code": "STC283005", "dims": "45°/90°, 195mm", "image": "img/1785880473275_image.png"}]}, {"name": "Brze stege", "sizes": [{"code": "TC2001001", "dims": "Disk vertikalna · φ58×20×28", "image": "img/1785880503438_image.png"}, {"code": "TC2001501", "dims": "Disk push-pull · φ68×20×28", "image": "img/1785880505305_image.png"}, {"code": "TC2001502", "dims": "Disk horizontalna · φ68×20×28", "image": "img/1785880507702_image.png"}, {"code": "TC2001002", "dims": "Kvadratna disk vertikalna · 130×65×25", "image": "img/1785880508743_image.png"}, {"code": "TC2001003", "dims": "Kvadratna disk push-pull · 130×65×25", "image": "img/1785880509763_image.png"}, {"code": "TC2001503", "dims": "Kvadratna disk horizontalna · 130×50×25", "image": "img/1785880510746_image.png"}]}, {"name": "Ugaone čaure", "sizes": [{"code": "CS281", "dims": "90°", "image": "img/1785880586189_image.png"}, {"code": "CS282", "dims": "45°", "image": "img/1785880587061_image.png"}, {"code": "CS283", "dims": "Paralelna · 180°", "image": "img/1785880588117_image.png"}, {"code": "CS284", "dims": "Vertikalna · 90°", "image": "img/1785880588945_image.png"}]}, {"name": "Ecentrične ploče", "sizes": [{"code": "ETL7525", "dims": "φ75×25", "image": "img/1785880610821_image.png"}, {"code": "ETL10025", "dims": "φ100×25", "image": "img/1785880611231_image.png"}]}, {"name": "Mostovi", "sizes": [{"code": "CB1701", "dims": "Dvotačni · 190×30×180°", "image": "img/1785880649166_image.png"}, {"code": "CB1702", "dims": "Trotačni · 90×30×120°", "image": "img/1785880650022_image.png"}]}]}, {"id": "pinovi", "label": "Zatezni pinovi", "icon": "pin", "subcats": [{"name": "Brzi pinovi", "image": "img/1785881020243_image.png", "sizes": [{"code": "RLB2824", "dims": "φ28×24"}, {"code": "RLB2850", "dims": "φ28×50"}, {"code": "RLB2875", "dims": "φ28×75"}]}, {"name": "Upušteni pinovi", "image": "img/1785880842015_image.png", "sizes": [{"code": "CHLB2850", "dims": "φ28×50"}, {"code": "CHLB2875", "dims": "φ28×75"}]}, {"name": "Upušteni brzi pinovi", "image": "img/1785881071162_image.png", "sizes": [{"code": "CHRLB2850", "dims": "φ28×50"}, {"code": "CHRLB2875", "dims": "φ28×75"}]}, {"name": "Pozicioni pin", "image": "img/1785881105715_image.png", "sizes": [{"code": "CHRLB2880", "dims": "φ40×φ28×80"}]}, {"name": "Brzi pin sa ručkom", "image": "img/1785881127195_image.png", "sizes": [{"code": "RLBH2850", "dims": "φ28×50"}]}, {"name": "Magnetni pin", "image": "img/1785881136837_image.png", "sizes": [{"code": "MLB2850", "dims": "φ28×50"}]}, {"name": "Povezujući pin", "image": "img/1785881149871_image.png", "sizes": [{"code": "CLB2850", "dims": "φ28×50"}]}]}, {"id": "pribor", "label": "Pribor", "icon": "wrench", "subcats": [{"name": "Regulator visine", "image": "img/1785881313778_image.png", "sizes": [{"code": "AS2880", "dims": "φ80×100"}]}, {"name": "Podizni prsten", "image": "img/1785881312734_image.png", "sizes": [{"code": "LR282", "dims": "2T nosivost"}]}, {"name": "Stezna cev", "image": "img/1785881311782_image.png", "sizes": [{"code": "CS28300", "dims": "φ28×300"}, {"code": "CS28600", "dims": "φ28×600"}]}, {"name": "Kolica za alat", "image": "img/1785881310762_image.png", "sizes": [{"code": "AC281000600", "dims": "1000×600×1025"}]}, {"name": "Uzemljivač", "image": "img/1785881309391_image.png", "sizes": [{"code": "GC28", "dims": "120×35"}]}, {"name": "Podloške", "image": "img/1785881307926_image.png", "sizes": [{"code": "S280520", "dims": "0.5–50 mm set"}]}, {"name": "Držač pištolja", "image": "img/1785881305638_image.png", "sizes": [{"code": "BH28200", "dims": "200 mm"}]}, {"name": "Imbus ključ", "image": "img/1785881303561_image.png", "sizes": [{"code": "HAW28", "dims": "150 mm"}]}, {"name": "Najlonska četka", "image": "img/1785881301504_image.png", "sizes": [{"code": "RB28", "dims": "φ30×210"}]}, {"name": "Brusni kamen", "image": "img/1785881299241_image.png", "sizes": [{"code": "BS28", "dims": "200×50×25"}]}, {"name": "Uljarica", "image": "img/1785881296788_image.png", "sizes": [{"code": "SB28", "dims": "200 ml"}]}]}];
 
 /* ---------- HELPERS ---------- */
 function catNum(ci){ return String(ci+1)+'.'; }
@@ -543,12 +566,10 @@ function renderCard(subcat, catIdx, subIdx){
   const count = subcat.sizes.length;
   const img = cardImageFor(subcat);
   const nStr = subNum(catIdx, subIdx);
-  const wishKey = catIdx+'::'+subIdx;
   return `
   <div class="product-card" data-system="${system}" data-cat="${catIdx}" data-subidx="${subIdx}">
     <span class="corner c-tl"></span><span class="corner c-tr"></span><span class="corner c-bl"></span><span class="corner c-br"></span>
     <div class="card-image">
-      <button class="wishlist-btn" data-wish-key="${wishKey}" title="Dodaj u omiljene">${icons.heart}</button>
       <img src="${img}" alt="${subcat.name}" loading="lazy">
     </div>
     <p class="p-num">${nStr}</p>
@@ -1019,11 +1040,15 @@ function openProductModal(catIdx, subIdx, variantIdx){
           <img class="main-image" id="modalMainImage" src="" alt="">
         </div>
         <div class="modal-form-wrap">
-          <button class="modal-close" id="modalCloseBtn">${icons.close}</button>
           <div class="modal-form-scroll">
+            <div class="modal-icon-row">
+              <button class="modal-icon-action wishlist-btn" id="modalWishlistBtn" title="Dodaj u omiljene">${icons.heart}</button>
+              <button class="modal-icon-action modal-close" id="modalCloseBtn" title="Zatvori">${icons.close}</button>
+            </div>
             <p class="modal-eyebrow" id="modalEyebrow"></p>
             <h3 class="modal-title" id="modalName"></h3>
-            <p class="modal-code" id="modalCode"></p>
+            <p class="modal-dims" id="modalDims"></p>
+
             <div class="modal-field">
               <label id="modalSubLabel">Podkategorija</label>
               <div class="custom-select" id="modalSubCustom">
@@ -1031,12 +1056,25 @@ function openProductModal(catIdx, subIdx, variantIdx){
                 <div class="custom-select-list" id="modalSubList"></div>
               </div>
             </div>
+
+            <div class="modal-add-row">
+              <button class="btn btn-accent modal-add-btn" id="modalAddBtn">
+                <span class="add-label-full">Dodaj u korpu</span>
+                <span class="add-label-short">Dodaj ${icons.cart}</span>
+              </button>
+              <div class="modal-qty-field">
+                <label>Kol.</label>
+                <input type="number" id="modalQty" value="1" min="1" step="1">
+              </div>
+            </div>
+
             <div class="modal-field" id="modalVariantFieldWrap"></div>
             <div class="modal-field" id="modalLegsFieldWrap"></div>
-          </div>
-          <div class="modal-footer-sticky">
-            <div class="modal-field"><label>Količina</label><input type="number" id="modalQty" value="1" min="1" step="1"></div>
-            <button class="btn btn-accent" id="modalAddBtn" style="width:100%; justify-content:center;">Dodaj u korpu</button>
+
+            <div class="modal-specs">
+              <h4>Specifikacije</h4>
+              <div class="modal-spec-row"><span>Šifra</span><span id="modalSpecCode"></span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1053,7 +1091,8 @@ function openProductModal(catIdx, subIdx, variantIdx){
 
   function updateCodeDisplay(){
     const s = subcat.sizes[curVarIdx];
-    document.getElementById('modalCode').innerHTML = `Šifra: <span>${s.code}</span> · ${s.dims}`;
+    document.getElementById('modalDims').textContent = s.dims;
+    document.getElementById('modalSpecCode').textContent = s.code;
     const img = s.image || subcat.image || '';
     const thumb = document.getElementById('modalVariantThumb');
     if(thumb) thumb.src = img;
@@ -1113,12 +1152,18 @@ function openProductModal(catIdx, subIdx, variantIdx){
     document.getElementById('modalName').innerHTML = `<span class="num">${sNum}</span>${subcat.name}`;
     document.getElementById('modalSubLabel').textContent = isTable ? 'Tip stola' : 'Podkategorija';
 
+    const wishKey = curCatIdx+'::'+curSubIdx;
+    const wishBtn = document.getElementById('modalWishlistBtn');
+    wishBtn.dataset.wishKey = wishKey;
+    const isWished = wishlistItems.includes(wishKey);
+    wishBtn.classList.toggle('active', isWished);
+    wishBtn.innerHTML = isWished ? icons.heartFilled : icons.heart;
+
     const subOptionsHtml = cat.subcats.map((sc,i)=>`<div class="custom-select-option${i===curSubIdx?' selected':''}" data-idx="${i}">${subNum(curCatIdx,i)} ${sc.name}</div>`).join('');
     const subBtn = document.getElementById('modalSubBtn');
     const subList = document.getElementById('modalSubList');
     subBtn.textContent = `${sNum} ${subcat.name}`;
     subList.innerHTML = subOptionsHtml;
-    const subCustom = document.getElementById('modalSubCustom');
     subList.querySelectorAll('.custom-select-option').forEach(opt=>{
       opt.addEventListener('mouseenter', ()=>{
         const idx = Number(opt.dataset.idx);
@@ -1128,7 +1173,7 @@ function openProductModal(catIdx, subIdx, variantIdx){
       });
       opt.addEventListener('click', ()=>{
         curSubIdx = Number(opt.dataset.idx);
-        subCustom.classList.remove('open');
+        document.getElementById('modalSubCustom').classList.remove('open');
         render();
       });
     });
@@ -1149,6 +1194,18 @@ function openProductModal(catIdx, subIdx, variantIdx){
   }
   render();
 
+  // one-time bindings (elements below persist across render() calls, so bind only once)
+  const subCustom = document.getElementById('modalSubCustom');
+  document.getElementById('modalSubBtn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    subCustom.classList.toggle('open');
+  });
+
+  document.getElementById('modalWishlistBtn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    toggleWishlist(curCatIdx+'::'+curSubIdx, e.currentTarget);
+  });
+
   document.getElementById('modalCatNav').addEventListener('click', (e)=>{
     const btn = e.target.closest('.modal-catnav-item');
     if(!btn) return;
@@ -1158,7 +1215,6 @@ function openProductModal(catIdx, subIdx, variantIdx){
   });
 
   function outsideClickHandler(e){
-    const subCustom = document.getElementById('modalSubCustom');
     if(subCustom && !subCustom.contains(e.target)) subCustom.classList.remove('open');
     const vCustom = document.getElementById('modalVariantCustom');
     if(vCustom && !vCustom.contains(e.target)) vCustom.classList.remove('open');
@@ -1219,8 +1275,6 @@ function openProductModal(catIdx, subIdx, variantIdx){
 
 /* ---------- CARD CLICK + COMPARE DELEGATION ---------- */
 document.getElementById('catalog').addEventListener('click', (e)=>{
-  const wishBtn = e.target.closest('.wishlist-btn');
-  if(wishBtn){ e.stopPropagation(); toggleWishlist(wishBtn.dataset.wishKey, wishBtn); return; }
   const card = e.target.closest('.product-card');
   if(card){ openProductModal(Number(card.dataset.cat), Number(card.dataset.subidx)); }
 });
@@ -1231,6 +1285,18 @@ document.getElementById('quoteForm').addEventListener('submit', (e)=>{
   showToast('Upit poslat (demo)');
   e.target.reset();
 });
+
+/* ---------- STICKY OFFSET SYNC (measures real header/subnav height, no guessing) ---------- */
+function syncHeaderOffsets(){
+  const headerEl = document.querySelector('header');
+  const subnavEl = document.querySelector('.subnav-wrap');
+  if(headerEl) document.documentElement.style.setProperty('--header-h', headerEl.offsetHeight + 'px');
+  if(subnavEl) document.documentElement.style.setProperty('--subnav-h', subnavEl.offsetHeight + 'px');
+}
+syncHeaderOffsets();
+window.addEventListener('load', syncHeaderOffsets);
+window.addEventListener('resize', syncHeaderOffsets);
+setTimeout(syncHeaderOffsets, 300);
 
 /* ---------- HERO INTERACTIVE DOT GLOW ---------- */
 (function(){
