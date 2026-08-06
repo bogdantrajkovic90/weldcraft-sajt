@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="sr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var t=localStorage.getItem('weldcraft-theme'); if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;}else{var h=new Date().getHours(); document.documentElement.dataset.theme=(h>=18||h<6)?'dark':'light';}}catch(e){}})();</script>
+<title>WeldCraft — Stolovi za zavarivanje &amp; pribor za stezanje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+  :root[data-theme="dark"]{
+    --bg:#15171A; --surface:#1E2124; --surface-2:#262A2E; --border:#33383D;
+    --text:#ECEBE7; --text-dim:#9AA0A6; --accent:#FF5A1F; --accent-ink:#1A0D06;
+    --mono-bg:#101214; --shadow: 0 12px 30px rgba(0,0,0,.35);
+    --dot: rgba(255,255,255,.06);
+  }
+  :root[data-theme="light"]{
+    --bg:#F2F1EC; --surface:#FFFFFF; --surface-2:#E9E7E0; --border:#D9D6CD;
+    --text:#191A17; --text-dim:#63645C; --accent:#E24E14; --accent-ink:#FFF3EC;
+    --mono-bg:#EDEBE4; --shadow: 0 12px 30px rgba(20,15,5,.08);
+    --dot: rgba(20,15,5,.08);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; transition:background .3s ease,color .3s ease;}
+  h1,h2,h3,.brand-text,.pill,.cta{font-family:'Oswald',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--accent);color:#fff;}
+  img{max-width:100%; display:block;}
+
+  /* ---------- HEADER ---------- */
+  header{position:sticky; top:0; z-index:50; background:var(--bg); border-bottom:2px solid var(--accent);}
+  .header-inner{max-width:1440px; margin:0 auto; padding:0 24px; height:80px; display:flex; align-items:center; justify-content:space-between; gap:24px;}
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none;}
+  .brand svg{flex-shrink:0;}
+  .brand-text{font-size:26px; font-weight:700; letter-spacing:.5px;}
+  .brand-accent{color:var(--accent);}
+  nav.main-nav{display:flex; gap:30px; font-size:15px; font-weight:600; letter-spacing:.4px; text-transform:uppercase;}
+  nav.main-nav a{text-decoration:none; color:var(--text-dim); transition:all .2s; padding:6px 12px; border-radius:5px; border:1px solid transparent;}
+  nav.main-nav a:hover{color:var(--text);}
+  nav.main-nav a.active{color:var(--text); border-color:var(--accent); background:var(--accent-ink);}
+  .header-actions .hamburger-btn{display:none;}
+  .mobile-nav-panel{display:none;}
+  .mobile-cat-rail{display:none;}
+  .header-actions{display:flex; align-items:center; gap:14px;}
+  .header-search, .header-wishlist{position:relative;}
+  .icon-btn{position:relative; width:40px; height:40px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .2s;}
+  .icon-btn:hover{border-color:var(--accent);}
+  .icon-btn svg{width:18px; height:18px;}
+  .icon-badge{position:absolute; top:-6px; right:-6px; background:var(--accent); color:#fff; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
+  .header-cart{position:relative;}
+  .cart-icon-btn{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .cart-icon-btn:hover{filter:brightness(1.08);}
+  .cart-icon-btn .icon-badge{background:#fff; color:var(--accent);}
+  .flyout-panel{position:absolute; top:calc(100% + 10px); right:0; width:340px; max-height:420px; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:14px; opacity:0; pointer-events:none; transform:translateY(-6px); transition:all .18s ease; z-index:60;}
+  .header-search.open .flyout-panel, .header-wishlist.open .flyout-panel{opacity:1; pointer-events:auto; transform:translateY(0);}
+  .flyout-panel input{width:100%; background:var(--mono-bg); border:1px solid var(--border); border-radius:6px; padding:10px 12px; color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; outline:none; margin-bottom:10px;}
+  .flyout-panel input:focus{border-color:var(--accent);}
+  .flyout-results{display:flex; flex-direction:column; gap:6px; max-height:340px; overflow-y:auto;}
+  .flyout-empty{font-size:12px; color:var(--text-dim); text-align:center; padding:16px 4px;}
+  .flyout-item{display:flex; align-items:center; gap:10px; padding:8px; border-radius:7px; cursor:pointer; transition:background .15s ease; position:relative;}
+  .flyout-item:hover{background:var(--surface-2);}
+  .flyout-item img{width:38px; height:38px; object-fit:contain; background:#fff; border:1px solid var(--border); border-radius:5px; flex-shrink:0; padding:2px;}
+  .flyout-item-name{font-size:12px; font-weight:600; margin:0 0 2px; line-height:1.3; padding-right:20px;}
+  .flyout-item-meta{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-dim);}
+  .flyout-item-remove{position:absolute; top:6px; right:6px; width:20px; height:20px; border:none; background:none; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .flyout-item-remove:hover{color:var(--accent);}
+  .flyout-item-remove svg{width:12px;height:12px;}
+  .theme-toggle{width:40px; height:40px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .25s ease, border-color .2s; overflow:hidden;}
+  .theme-toggle:hover{border-color:var(--accent);}
+  :root[data-theme="light"] .theme-toggle{background:#1B1D20; border-color:#1B1D20;}
+  :root[data-theme="dark"] .theme-toggle{background:#FFFFFF; border-color:#FFFFFF;}
+  .theme-icon-stage{position:relative; width:18px; height:18px; display:block;}
+  .theme-icon-stage svg{position:absolute; inset:0; width:18px; height:18px; opacity:0; transform:scale(.4) rotate(-60deg); transition:opacity .35s ease, transform .35s cubic-bezier(.34,1.56,.64,1);}
+  :root[data-theme="light"] .icon-moon{opacity:1; transform:scale(1) rotate(0deg);}
+  :root[data-theme="dark"] .icon-sun{opacity:1; transform:scale(1) rotate(0deg);}
+  @keyframes themeFlash{
+    0%{ filter:drop-shadow(0 0 0 transparent); }
+    45%{ filter:drop-shadow(0 0 7px #FFB733); }
+    100%{ filter:drop-shadow(0 0 0 transparent); }
+  }
+  .theme-toggle.flashing .theme-icon-stage svg{ animation:themeFlash .55s ease; }
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:6px; font-family:'Oswald',sans-serif; font-weight:600; font-size:14px; letter-spacing:.4px; text-transform:uppercase; text-decoration:none; cursor:pointer; border:1px solid transparent; transition:all .2s ease;}
+  .btn-accent{background:var(--accent); color:#fff;}
+  .btn-accent:hover{filter:brightness(1.08); transform:translateY(-1px);}
+  .btn-accent:disabled{opacity:.4; cursor:not-allowed; transform:none; filter:none;}
+  .btn-ghost{background:transparent; border-color:var(--border); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--accent); color:var(--accent);}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative; overflow:hidden; padding:48px 24px 64px; background-image: radial-gradient(circle, var(--dot) 1.6px, transparent 1.6px); background-size:28px 28px;}
+  .hero-dotgrid-bright{
+    position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0;
+    background-image: radial-gradient(circle, var(--accent) 1.9px, transparent 1.9px); background-size:28px 28px;
+    -webkit-mask-image: radial-gradient(circle 150px at var(--mx,-500px) var(--my,-500px), #000 0%, transparent 100%);
+    mask-image: radial-gradient(circle 150px at var(--mx,-500px) var(--my,-500px), #000 0%, transparent 100%);
+    transition: opacity .35s ease;
+  }
+  .hero-inner{max-width:1440px; margin:0 auto; position:relative; z-index:2;}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--accent); border:1px solid var(--border); padding:6px 12px; border-radius:20px; margin-bottom:22px; letter-spacing:.5px;}
+  .eyebrow::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent);}
+  h1.hero-title{font-size:clamp(38px,6vw,68px); line-height:1.02; margin:0 0 22px; font-weight:700; letter-spacing:-.5px; max-width:820px;}
+  h1.hero-title em{color:var(--accent); font-style:normal;}
+  .hero-sub{font-size:18px; line-height:1.6; color:var(--text-dim); max-width:640px; margin:0 0 36px;}
+  .systems-strip{display:flex; gap:0; border:1px solid var(--border); border-radius:8px; overflow:hidden; max-width:560px;}
+  .sys-btn{flex:1; padding:14px 18px; border:none; border-right:1px solid var(--border); background:var(--surface); cursor:pointer; text-align:left; font-family:inherit; color:var(--text); transition:background .2s ease, box-shadow .2s ease;}
+  .sys-btn:last-child{border-right:none;}
+  .sys-btn:hover{background:var(--surface-2);}
+  .sys-btn.active{background:var(--accent-ink); box-shadow:inset 0 0 0 2px var(--accent);}
+  .sys-btn .sys-label{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px;}
+  .sys-btn .sys-value{font-family:'Oswald',sans-serif; font-size:20px; font-weight:600; margin-top:2px;}
+  .sys-btn.active .sys-value{color:var(--accent);}
+
+  /* ---------- SUBNAV ---------- */
+  .subnav-wrap{position:sticky; top:var(--header-h, 80px); z-index:40; background:var(--bg); border-bottom:1px solid var(--border);}
+  .subnav{max-width:1440px; margin:0 auto; padding:14px 24px; display:flex; gap:10px; overflow-x:auto; scrollbar-width:none;}
+  .subnav::-webkit-scrollbar{display:none;}
+  .pill{flex-shrink:0; display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:20px; border:1px solid var(--border); background:var(--surface); font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:.3px; text-decoration:none; color:var(--text-dim); transition:all .2s ease; white-space:nowrap;}
+  .pill svg{width:15px; height:15px;}
+  .pill:hover{color:var(--text); border-color:var(--text-dim);}
+  .pill.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+
+  /* ---------- LAYOUT ---------- */
+  main.layout{max-width:1440px; margin:0 auto; padding:32px 24px 0; display:grid; grid-template-columns:270px minmax(0,1fr) 300px; gap:24px; align-items:start;}
+
+  /* ---------- SIDEBAR TREE ---------- */
+  .sidebar-tree{position:sticky; top:170px; align-self:start; max-height:calc(100vh - 190px); overflow-y:auto; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px;}
+  .sidebar-tree h3{margin:0 0 12px; font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
+  .tree-cat{border-bottom:1px solid var(--border);}
+  .tree-cat:last-child{border-bottom:none;}
+  .tree-cat > summary{cursor:pointer; padding:10px 8px; display:flex; align-items:center; gap:8px; font-size:14.5px; font-weight:600; list-style:none; color:var(--text); user-select:none; border-radius:6px; border:1px solid transparent; transition:all .15s ease;}
+  .tree-cat > summary:hover{border-color:var(--border); background:var(--surface-2);}
+  .tree-cat.cat-active > summary{border-color:var(--accent); background:var(--accent-ink); color:var(--accent);}
+  .tree-cat.cat-active > summary svg{color:var(--accent);}
+  .tree-cat > summary svg{width:16px; height:16px; color:var(--accent); flex-shrink:0;}
+  .tree-cat > summary::-webkit-details-marker{display:none;}
+  .tree-cat > summary::after{content:'+'; margin-left:auto; color:var(--text-dim); font-family:monospace; font-size:14px;}
+  .tree-cat[open] > summary::after{content:'−';}
+  .tree-sub-list{padding:0 0 10px 20px;}
+  .tree-sub{border-top:1px dashed var(--border);}
+  .tree-sub:first-child{border-top:none;}
+  .tree-sub > summary{cursor:pointer; padding:8px 6px; font-size:13.5px; color:var(--text-dim); list-style:none; user-select:none; border-radius:5px; border:1px solid transparent; transition:all .15s ease;}
+  .tree-sub > summary:hover{color:var(--text);}
+  .tree-sub.active-modal > summary{border-color:var(--accent); background:var(--accent-ink); color:var(--text);}
+  .tree-sub > summary::-webkit-details-marker{display:none;}
+  .tree-sub > summary::before{content:'▸'; color:var(--accent); margin-right:7px; display:inline-block; transition:transform .15s; font-size:16px; font-weight:700;}
+  .tree-sub[open] > summary::before{transform:rotate(90deg);}
+  .tree-sizes{list-style:none; margin:0; padding:0 0 8px 16px; display:flex; flex-direction:column; gap:4px;}
+  .tree-sizes li{display:flex; justify-content:space-between; gap:8px; font-size:10.5px; color:var(--text-dim);}
+  .tree-sizes li .mono{color:var(--text); font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
+  .tree-dim{font-family:'IBM Plex Mono',monospace; text-align:right;}
+
+  /* ---------- CART PANEL ---------- */
+  .cart-panel{position:sticky; top:170px; align-self:start; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px; max-height:calc(100vh - 190px); display:flex; flex-direction:column;}
+  .cart-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .cart-header h3{margin:0; font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; display:flex; align-items:center; gap:8px;}
+  .cart-header h3 svg{width:15px; height:15px; color:var(--accent);}
+  .cart-count{background:var(--accent); color:#fff; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; padding:2px 7px; border-radius:10px;}
+  .cart-empty{font-size:12.5px; color:var(--text-dim); line-height:1.6; padding:12px 0;}
+  .cart-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; overflow-y:auto; flex:1;}
+  .cart-item{background:var(--surface-2); border:1px solid var(--border); border-radius:7px; padding:10px 12px; position:relative; display:flex; gap:10px;}
+  .cart-item img{width:40px; height:40px; object-fit:contain; border-radius:4px; flex-shrink:0; background:#fff; border:1px solid var(--border); padding:3px;}
+  .cart-item-name{font-size:12px; font-weight:600; margin:0 0 3px; padding-right:26px; line-height:1.3;}
+  .cart-item-meta{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-dim); line-height:1.5;}
+  .cart-remove{position:absolute; top:6px; right:6px; width:26px; height:26px; border-radius:5px; border:1px solid transparent; background:none; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s ease;}
+  .cart-remove:hover{color:var(--accent); border-color:var(--border); background:var(--surface);}
+  .cart-remove svg{width:16px;height:16px;}
+  .cart-submit{width:100%; margin-top:14px; justify-content:center; font-size:12.5px; padding:10px;}
+  .cart-submit svg{width:14px; height:14px; flex-shrink:0;}
+
+  /* ---------- SECTIONS ---------- */
+  .cat-section{padding:0 0 64px; scroll-margin-top:calc(var(--header-h, 80px) + var(--subnav-h, 62px) + 10px); border-bottom:1px solid var(--border);}
+  .cat-section:last-child{border-bottom:none;}
+  .cat-header{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:28px; flex-wrap:wrap;}
+  .cat-title-group{display:flex; align-items:center; gap:16px;}
+  .cat-icon{width:52px; height:52px; border-radius:10px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--accent); flex-shrink:0;}
+  .cat-icon svg{width:26px; height:26px;}
+  .cat-title-group h2{font-size:24px; margin:0 0 4px; font-weight:600;}
+  .cat-title-group h2 .num{color:var(--accent); margin-right:8px;}
+  .cat-count{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-dim);}
+
+  .product-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px;}
+  .empty-state{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-dim); border:1px dashed var(--border); border-radius:8px; padding:20px; text-align:center; margin:0;}
+  .product-card{position:relative; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px; transition:transform .2s ease, box-shadow .2s ease; cursor:pointer; display:flex; flex-direction:column;}
+  .product-card:hover{transform:translateY(-2px); box-shadow:var(--shadow);}
+  .corner{position:absolute; width:12px; height:12px; transition:all .25s ease; pointer-events:none;}
+  .c-tl{top:-1px; left:-1px; border-top:2px solid var(--border); border-left:2px solid var(--border);}
+  .c-tr{top:-1px; right:-1px; border-top:2px solid var(--border); border-right:2px solid var(--border);}
+  .c-bl{bottom:-1px; left:-1px; border-bottom:2px solid var(--border); border-left:2px solid var(--border);}
+  .c-br{bottom:-1px; right:-1px; border-bottom:2px solid var(--border); border-right:2px solid var(--border);}
+  .product-card:hover .corner{border-color:var(--accent); width:18px; height:18px;}
+  .product-card:hover .c-tl{top:-4px; left:-4px;}
+  .product-card:hover .c-tr{top:-4px; right:-4px;}
+  .product-card:hover .c-bl{bottom:-4px; left:-4px;}
+  .product-card:hover .c-br{bottom:-4px; right:-4px;}
+
+  .card-image{position:relative; width:100%; aspect-ratio:1/1; border-radius:6px; background:#fff; border:1px solid var(--border); overflow:hidden; margin-bottom:10px;}
+  .card-image img{width:100%; height:100%; object-fit:contain; display:block; padding:10px;}
+  .p-num{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); font-weight:600;}
+  .p-name{font-size:14px; font-weight:600; margin:3px 0 6px; line-height:1.3;}
+  .p-size-count{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); margin:0;}
+  .wishlist-btn{position:absolute; top:7px; right:7px; width:28px; height:28px; border-radius:6px; background:color-mix(in srgb, var(--surface) 80%, transparent); backdrop-filter:blur(4px); border:1px solid var(--border); color:var(--text-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease; z-index:2;}
+  .wishlist-btn svg{width:14px; height:14px;}
+  .wishlist-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .wishlist-btn.active{color:#e6395c; border-color:#e6395c;}
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{position:fixed; inset:0; background:rgba(10,9,7,.6); backdrop-filter:blur(3px); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; opacity:0; pointer-events:none; transition:opacity .2s ease;}
+  .modal-overlay.show{opacity:1; pointer-events:auto;}
+  .modal-box{background:var(--bg); border:1px solid var(--border); border-radius:12px; max-width:1280px; width:100%; max-height:90vh; overflow:hidden; box-shadow:var(--shadow); display:grid; grid-template-columns:180px 1.15fr 1fr;}
+  .modal-catnav{background:var(--surface-2); border-right:1px solid var(--border); padding:14px 10px; overflow-y:auto; display:flex; flex-direction:column; gap:2px;}
+  .modal-catnav-item{display:flex; align-items:center; gap:8px; text-align:left; background:none; border:1px solid transparent; border-radius:6px; padding:9px 8px; cursor:pointer; color:var(--text-dim); font-size:11.5px; font-family:'Inter',sans-serif; line-height:1.3;}
+  .modal-catnav-item svg{width:15px; height:15px; flex-shrink:0;}
+  .modal-catnav-item:hover{color:var(--text); background:var(--surface);}
+  .modal-catnav-item.active{color:var(--accent); background:var(--accent-ink); border-color:var(--accent); font-weight:600;}
+  .modal-viewer{background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; padding:0; height:600px; max-height:600px; background-image: radial-gradient(circle, var(--dot) 1.6px, transparent 1.6px); background-size:24px 24px; position:relative; overflow:hidden;}
+  .modal-viewer.has-image{background-image:none; background:#fff;}
+  .modal-viewer img.main-image{width:100%; height:100%; object-fit:contain; padding:40px;}
+  .viewer-3d-container{width:100%; height:100%; min-height:340px; position:relative;}
+  .viewer-3d-container canvas{display:block;}
+  .viewer-3d-hint{position:absolute; bottom:10px; left:0; right:0; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-dim); pointer-events:none;}
+  .modal-form-wrap{height:600px; max-height:600px; display:flex; flex-direction:column; position:relative; overflow:hidden;}
+  .modal-form-scroll{flex:1; overflow-y:auto; padding:28px; display:flex; flex-direction:column; gap:14px;}
+  .modal-eyebrow-row{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+  .modal-icon-row{display:flex; gap:8px; flex-shrink:0;}
+  .modal-icon-action{width:32px; height:32px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .modal-icon-action svg{width:15px;height:15px;}
+  .modal-icon-action:hover{border-color:var(--accent); color:var(--accent);}
+  .modal-icon-row .wishlist-btn{position:static; top:auto; right:auto; width:32px; height:32px; background:var(--surface); backdrop-filter:none; border:1px solid var(--border); color:var(--text-dim);}
+  .modal-icon-row .wishlist-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .modal-icon-row .wishlist-btn.active{color:#e6395c; border-color:#e6395c;}
+  .modal-close{border:1px solid var(--accent); background:var(--accent); color:var(--bg);}
+  .modal-close:hover{filter:brightness(1.15);}
+  .modal-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:.5px; margin:0;}
+  .modal-title-row{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+  .modal-title{font-size:21px; font-weight:600; margin:0; flex-shrink:1; min-width:0;}
+  .modal-title .num{color:var(--accent); margin-right:6px;}
+  .modal-dims{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-dim); margin:0;}
+  .modal-add-row{display:flex; gap:8px; align-items:flex-end; flex-shrink:0;}
+  .modal-add-btn{justify-content:center; white-space:nowrap; overflow:hidden; padding:9px 14px; font-size:12px;}
+  .modal-add-btn svg{width:13px; height:13px; flex-shrink:0;}
+  .add-label-full{display:inline;}
+  .add-label-short{display:none; align-items:center; gap:6px;}
+  .modal-qty-field{width:64px; flex-shrink:0;}
+  .modal-qty-field label{font-size:10px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; display:block; margin-bottom:5px;}
+  .modal-qty-field input{width:100%; background:var(--mono-bg); border:1px solid var(--border); border-radius:6px; padding:9px 8px; color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; outline:none;}
+  .modal-qty-field input:focus{border-color:var(--accent);}
+  .modal-specs{border-top:1px solid var(--border); padding-top:14px; margin-top:4px;}
+  .modal-specs h4{font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; font-weight:600; margin:0 0 10px;}
+  .modal-spec-row{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--border); font-size:13px;}
+  .modal-spec-row:last-child{border-bottom:none;}
+  .modal-spec-row span:first-child{color:var(--text-dim);}
+  .modal-spec-row span:last-child{font-family:'IBM Plex Mono',monospace; color:var(--accent); font-weight:600;}
+  .modal-field{display:flex; flex-direction:column; gap:6px;}
+  .modal-field label{font-size:11.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
+  .modal-field select, .modal-field input[type="number"]{background:var(--mono-bg); border:1px solid var(--border); border-radius:6px; padding:11px 12px; color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; outline:none; cursor:pointer; width:100%;}
+  .modal-field input[type="number"]{cursor:text; max-width:120px;}
+  .modal-field select:focus, .modal-field input:focus{border-color:var(--accent);}
+  @media (max-width:480px){
+    .add-label-full{display:none;}
+    .add-label-short{display:inline-flex;}
+  }
+  .cart-qty{color:var(--accent); font-family:'IBM Plex Mono',monospace; font-weight:700;}
+  .variant-picker-row{display:flex; align-items:center; gap:10px;}
+  .variant-picker-row select{flex:1;}
+  .variant-thumb{width:44px; height:44px; border-radius:6px; object-fit:contain; border:1px solid var(--border); flex-shrink:0; background:#fff; padding:3px;}
+  .custom-select{position:relative;}
+  .custom-select-btn{width:100%; text-align:left; background:var(--mono-bg); border:1px solid var(--border); border-radius:6px; padding:11px 12px; color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .custom-select-btn::after{content:'▾'; color:var(--text-dim); flex-shrink:0;}
+  .custom-select-btn:hover{border-color:var(--accent);}
+  .custom-select.open .custom-select-btn{border-color:var(--accent);}
+  .custom-select-list{position:absolute; top:calc(100% + 4px); left:0; right:0; background:var(--surface); border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow); max-height:240px; overflow-y:auto; z-index:20; display:none;}
+  .custom-select.open .custom-select-list{display:block;}
+  .custom-select-option{padding:10px 12px; font-size:12.5px; color:var(--text); cursor:pointer; border-bottom:1px solid var(--border); transition:background .1s ease;}
+  .custom-select-option:last-child{border-bottom:none;}
+  .custom-select-option:hover, .custom-select-option.previewing{background:var(--accent-ink); color:var(--accent);}
+  .custom-select-option.selected{font-weight:600; color:var(--accent);}
+
+
+  /* ---------- CONTACT ---------- */
+  .contact-section{max-width:1440px; margin:0 auto; padding:72px 24px 96px;}
+  .contact-grid{display:grid; grid-template-columns:1fr 1.3fr; gap:48px; align-items:flex-start;}
+  .contact-info h2{font-size:32px; margin:0 0 16px;}
+  .contact-info p{color:var(--text-dim); line-height:1.7; font-size:15px; max-width:400px;}
+  .contact-detail{display:flex; gap:12px; align-items:flex-start; margin-top:22px; font-size:14px;}
+  .contact-detail svg{width:18px; height:18px; color:var(--accent); flex-shrink:0; margin-top:2px;}
+  .quick-contact-row{display:flex; gap:10px; margin-top:16px;}
+  .quick-contact-btn{display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none; font-size:13px; font-weight:600; transition:all .2s ease;}
+  .quick-contact-btn svg{width:16px; height:16px;}
+  .quick-contact-btn.wa:hover{border-color:#25D366; color:#25D366;}
+  .quick-contact-btn.vb:hover{border-color:#7360F2; color:#7360F2;}
+  .contact-form{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:32px;}
+  .form-row{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;}
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field label{font-size:12px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
+  .field input, .field select, .field textarea{background:var(--mono-bg); border:1px solid var(--border); border-radius:6px; padding:11px 12px; color:var(--text); font-family:'Inter',sans-serif; font-size:14px; outline:none; transition:border-color .2s;}
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent);}
+  .field.full{grid-column:1/-1;}
+  .contact-form .btn{width:100%; justify-content:center; margin-top:6px;}
+
+  footer{border-top:1px solid var(--border); padding:40px 24px 32px;}
+  .footer-inner{max-width:1440px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px; align-items:center;}
+  .footer-inner .brand-text{font-size:16px;}
+  .footer-links{display:flex; gap:22px; font-size:13px; color:var(--text-dim);}
+  .footer-links a{text-decoration:none;}
+  .footer-links a:hover{color:var(--accent);}
+  .footer-note{font-size:12px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
+
+  .toast{position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); z-index:100; background:var(--surface); border:1px solid var(--accent); color:var(--text); padding:14px 22px; border-radius:8px; font-size:14px; opacity:0; pointer-events:none; transition:all .3s ease; box-shadow:var(--shadow); display:flex; align-items:center; gap:10px;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast svg{width:16px;height:16px;color:var(--accent);}
+
+  @media (max-width:1150px){ main.layout{grid-template-columns:1fr;} .sidebar-tree, .cart-panel{position:static; max-height:none;} }
+  @media (max-width:900px){
+    nav.main-nav{display:none;}
+    .header-inner{height:auto; flex-wrap:wrap; row-gap:10px; padding:12px 20px;}
+    .brand{flex:0 0 100%;}
+    .header-actions{flex:0 0 100%; justify-content:space-between; gap:8px;}
+    .header-actions .icon-btn, .header-actions .theme-toggle{width:36px; height:36px;}
+    .header-actions .icon-btn svg, .header-actions .theme-toggle svg{width:16px; height:16px;}
+    .header-actions .btn-accent{height:36px; padding:0 14px; font-size:12px; white-space:nowrap; display:inline-flex; align-items:center;}
+    .header-actions .hamburger-btn{display:flex;}
+    .mobile-nav-panel{
+      display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--bg);
+      border-bottom:1px solid var(--border); box-shadow:var(--shadow); padding:8px 24px 16px;
+      max-height:0; overflow:hidden; transition:max-height .25s ease; z-index:45;
+    }
+    .mobile-nav-panel.open{max-height:80vh; overflow-y:auto;}
+    .mobile-nav-panel a{
+      text-decoration:none; color:var(--text); font-family:'Oswald',sans-serif; font-weight:600;
+      text-transform:uppercase; letter-spacing:.4px; font-size:15px; padding:14px 4px; border-bottom:1px solid var(--border);
+    }
+    .mobile-nav-panel a:last-child{border-bottom:none;}
+    .subnav-wrap{top:var(--header-h, 128px);}
+    .cat-section{scroll-margin-top:calc(var(--header-h, 128px) + var(--subnav-h, 62px) + 10px);}
+    .contact-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+    .systems-strip{max-width:100%;}
+    .modal-box{grid-template-columns:1fr; max-height:92vh;}
+    .modal-catnav{display:none;}
+    .modal-viewer{border-right:none; border-bottom:1px solid var(--border); height:200px; max-height:200px;}
+    .modal-form-wrap{height:auto; max-height:calc(92vh - 200px);}
+    .product-grid{grid-template-columns:repeat(2,1fr); gap:12px;}
+    .flyout-panel{width:calc(100vw - 40px); right:-6px;}
+    .sidebar-tree{display:none;}
+    .mobile-cat-list{border-bottom:1px solid var(--border);}
+    .mobile-nav-panel .mobile-cat-details{border-top:1px dashed var(--border);}
+    .mobile-nav-panel .mobile-cat-details:first-child{border-top:none;}
+    .mobile-nav-panel .mobile-cat-details summary{
+      cursor:pointer; padding:12px 4px; font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase;
+      letter-spacing:.4px; font-size:14px; color:var(--text); list-style:none; display:flex; justify-content:space-between; align-items:center;
+    }
+    .mobile-nav-panel .mobile-cat-details summary::-webkit-details-marker{display:none;}
+    .mobile-nav-panel .mobile-cat-details summary::after{content:'+'; color:var(--accent); font-family:monospace; font-size:16px;}
+    .mobile-nav-panel .mobile-cat-details[open] summary::after{content:'−';}
+    .mobile-subcat-list{display:flex; flex-direction:column; padding:0 0 8px 10px;}
+    .mobile-subcat-list a{
+      text-decoration:none; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; font-size:12px;
+      padding:8px 4px; border-bottom:1px dashed var(--border); text-transform:none; letter-spacing:0; font-weight:400;
+    }
+    .mobile-subcat-list a:last-child{border-bottom:none;}
+  }
+
+  /* ---------- LOADING SCREEN ---------- */
+  .loading-screen{position:fixed; inset:0; z-index:9999; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; transition:opacity .35s ease, visibility .35s ease;}
+  .loading-screen.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+  .loading-dotgrid{position:absolute; inset:0; background-image: radial-gradient(circle, var(--dot) 1.6px, transparent 1.6px); background-size:28px 28px;}
+  .loading-dotgrid-bright{background-image: radial-gradient(circle, var(--accent) 1.7px, transparent 1.7px); opacity:.85; clip-path: circle(0% at 50% 50%); animation: loadingReveal 1.2s cubic-bezier(.2,.7,.3,1) forwards;}
+  @keyframes loadingReveal{ 0%{ clip-path: circle(0% at 50% 50%); } 65%{ clip-path: circle(65% at 50% 50%); } 100%{ clip-path: circle(130% at 50% 50%); } }
+  .loading-center{position:relative; width:110px; height:110px; display:flex; align-items:center; justify-content:center; margin-bottom:22px; z-index:2;}
+  .loading-ring{position:absolute; inset:-16px; border-radius:50%; background: conic-gradient(from 0deg, transparent 0deg, var(--accent) 55deg, transparent 130deg); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px)); animation: loadingSpin 1.5s linear infinite;}
+  @keyframes loadingSpin{ to{ transform:rotate(360deg); } }
+  .loading-logo{ position:relative; z-index:2; color:var(--text); }
+  .loading-pulse-dot{ animation: loadingPulse 1s ease-in-out infinite; transform-origin:15px 15px; }
+  @keyframes loadingPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
+  .loading-wordmark{font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; letter-spacing:3px; margin:0; opacity:0; z-index:2; animation: loadingFadeUp .6s ease .25s forwards;}
+  .loading-wordmark span{ color:var(--accent); }
+  @keyframes loadingFadeUp{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+  .loading-status{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); letter-spacing:.4px; margin:14px 0 0; z-index:2; min-height:16px;}
+  .loading-bar-track{width:220px; height:2px; background:var(--border); margin-top:22px; border-radius:2px; overflow:hidden; z-index:2;}
+  .loading-bar-fill{height:100%; width:0%; background:var(--accent); animation: loadingFill 1.15s cubic-bezier(.4,0,.2,1) forwards;}
+  @keyframes loadingFill{ to{ width:100%; } }
+</style>
+</head>
+<body>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-dotgrid"></div>
+  <div class="loading-dotgrid loading-dotgrid-bright"></div>
+  <div class="loading-center">
+    <div class="loading-ring"></div>
+    <svg class="loading-logo" width="56" height="56" viewBox="0 0 30 30" fill="none">
+      <rect x="1" y="1" width="28" height="28" rx="4" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="9" cy="9" r="1.6" fill="currentColor"/><circle cx="15" cy="9" r="1.6" fill="currentColor"/><circle cx="21" cy="9" r="1.6" fill="currentColor"/>
+      <circle cx="9" cy="15" r="1.6" fill="currentColor"/><circle cx="15" cy="15" r="2.1" fill="var(--accent)" class="loading-pulse-dot"/><circle cx="21" cy="15" r="1.6" fill="currentColor"/>
+      <circle cx="9" cy="21" r="1.6" fill="currentColor"/><circle cx="15" cy="21" r="1.6" fill="currentColor"/><circle cx="21" cy="21" r="1.6" fill="currentColor"/>
+    </svg>
+  </div>
+  <p class="loading-wordmark">Weld<span>Craft</span></p>
+  <p class="loading-status" id="loadingStatus">Pripremamo katalog...</p>
+  <div class="loading-bar-track"><div class="loading-bar-fill"></div></div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <a href="#pocetna" class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+        <rect x="1" y="1" width="28" height="28" rx="4" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="9" cy="9" r="1.6" fill="currentColor"/><circle cx="15" cy="9" r="1.6" fill="currentColor"/><circle cx="21" cy="9" r="1.6" fill="currentColor"/>
+        <circle cx="9" cy="15" r="1.6" fill="currentColor"/><circle cx="15" cy="15" r="1.6" fill="var(--accent)"/><circle cx="21" cy="15" r="1.6" fill="currentColor"/>
+        <circle cx="9" cy="21" r="1.6" fill="currentColor"/><circle cx="15" cy="21" r="1.6" fill="currentColor"/><circle cx="21" cy="21" r="1.6" fill="currentColor"/>
+      </svg>
+      <span class="brand-text">Weld<span class="brand-accent">Craft</span></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="#pocetna">Početna</a>
+      <a href="#stolovi">Proizvodi</a>
+      <a href="galerija.html">Galerija</a>
+      <a href="o-nama.html">O nama</a>
+      <a href="#ponuda">Kontakt</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn hamburger-btn" id="hamburgerBtn" aria-label="Meni" title="Meni">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="header-search" id="headerSearch">
+        <button class="icon-btn" id="searchToggleBtn" aria-label="Pretraga" title="Pretraga">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </button>
+        <div class="flyout-panel" id="searchPanel">
+          <input type="text" id="searchInput" placeholder="Pretraži po šifri, nazivu, dimenziji...">
+          <div class="flyout-results" id="searchResults"></div>
+        </div>
+      </div>
+      <div class="header-wishlist" id="headerWishlist">
+        <button class="icon-btn" id="wishlistToggleBtn" aria-label="Omiljeni proizvodi" title="Omiljeni proizvodi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.9-10-9.3C.4 8.2 2 4.5 5.6 4c2-.3 3.8.6 5 2.2C11.8 4.6 13.6 3.7 15.6 4c3.6.5 5.2 4.2 3.6 7.7C16.5 16.1 12 21 12 21z"/></svg>
+          <span class="icon-badge" id="wishlistBadge" style="display:none;">0</span>
+        </button>
+        <div class="flyout-panel" id="wishlistPanel">
+          <div class="flyout-results" id="wishlistResults"></div>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Promeni temu" title="Promeni temu">
+        <span class="theme-icon-stage">
+          <svg class="icon-sun" id="iconSun" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="4.3" fill="#FFD23F" stroke="#1B1D20" stroke-width="1.3"/>
+            <g stroke="#1B1D20" stroke-width="1.8" stroke-linecap="round">
+              <path d="M12 2.5v2.4M12 19.1v2.4M4.5 4.5l1.7 1.7M17.8 17.8l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.5 19.5l1.7-1.7M17.8 6.2l1.7-1.7"/>
+            </g>
+          </svg>
+          <svg class="icon-moon" id="iconMoon" viewBox="0 0 24 24" fill="none">
+            <g transform="translate(2.5,2.5) scale(0.7)">
+              <path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" fill="#FFB733"/>
+            </g>
+            <path d="M20 3.4l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" fill="#fff"/>
+            <circle cx="3" cy="3" r="0.6" fill="#fff"/>
+            <circle cx="2" cy="12" r="0.55" fill="#fff"/>
+            <circle cx="21.5" cy="13" r="0.6" fill="#fff"/>
+            <circle cx="5" cy="20.5" r="0.5" fill="#fff"/>
+            <circle cx="18" cy="21" r="0.5" fill="#fff"/>
+          </svg>
+        </span>
+      </button>
+      <div class="header-cart" id="headerCart">
+        <button class="icon-btn cart-icon-btn" id="cartToggleBtn" aria-label="Korpa" title="Korpa">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2 3h2l2.4 12.2a2 2 0 002 1.8h8.4a2 2 0 002-1.7L21 8H6"/></svg>
+          <span class="icon-badge" id="cartBadge" style="display:none;">0</span>
+        </button>
+        <div class="flyout-panel" id="cartFlyoutPanel">
+          <div class="flyout-results" id="cartFlyoutContent"></div>
+        </div>
+      </div>
+      <a href="#ponuda" class="btn btn-accent">Zatraži ponudu</a>
+    </div>
+  </div>
+  <div class="mobile-nav-panel" id="mobileNavPanel">
+    <a href="#pocetna">Početna</a>
+    <div class="mobile-cat-list" id="mobileCatList"></div>
+    <a href="galerija.html">Galerija</a>
+    <a href="o-nama.html">O nama</a>
+    <a href="#ponuda">Kontakt</a>
+  </div>
+</header>
+
+<section class="hero" id="pocetna">
+  <div class="hero-dotgrid-bright" id="heroDotBright"></div>
+  <div class="hero-inner">
+    <span class="eyebrow">MODULARNI SISTEMI D16 · D22 · D28</span>
+    <h1 class="hero-title">Dobrodošli u svet <em>preciznosti i snage</em>.</h1>
+    <p class="hero-sub">Naša ponuda obuhvata vrhunske stolove za zavarivanje izrađene od čelika i livenog gvožđa, projektovane da izdrže najzahtevnije uslove rada.</p>
+    <p class="hero-sub hero-sub-2">Uz stolove nudimo i širok asortiman alata i dodatne opreme, kako biste imali sve što vam je potrebno za savršeno zavarivanje — od stega i ugaonika do modularnih sistema za prilagođavanje svakom projektu.</p>
+    <div class="systems-strip" id="systemsStrip">
+      <button class="sys-btn active" data-system="D28"><div class="sys-label">Sistem</div><div class="sys-value">D28</div></button>
+      <button class="sys-btn" data-system="D22"><div class="sys-label">Sistem</div><div class="sys-value">D22</div></button>
+      <button class="sys-btn" data-system="D16"><div class="sys-label">Sistem</div><div class="sys-value">D16</div></button>
+    </div>
+  </div>
+</section>
+
+<div class="subnav-wrap"><div class="subnav" id="subnav"></div></div>
+<div class="mobile-cat-rail" id="mobileCatRail"></div>
+
+<main class="layout">
+  <aside class="sidebar-tree" id="sidebarTree"><h3>Mapa kategorija</h3></aside>
+  <div id="catalog"></div>
+  <aside class="cart-panel" id="cartPanel"></aside>
+</main>
+
+<section class="contact-section" id="ponuda">
+  <div class="contact-grid">
+    <div class="contact-info">
+      <h2>Zatraži ponudu</h2>
+      <p>Pošalji nam šifru proizvoda, dimenzije i količinu — vraćamo ponudu sa cenom i rokom isporuke. Za stolove za zavarivanje možemo pripremiti i 3D model konfiguracije pre porudžbine.</p>
+      <div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18M3 12h18M3 19h18"/></svg><span>PIB / matični broj — dodaj kasnije u realnom sadržaju</span></div>
+      <div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.6a16 16 0 006.4 6.4l1.1-1.1a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span>+381 6X XXX XXX (placeholder)</span></div>
+      <div class="quick-contact-row">
+        <a href="#" class="quick-contact-btn wa" title="WhatsApp (broj dodajemo naknadno)">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.1L2 22l5.1-1.3C8.6 21.5 10.3 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3C4.4 15 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8zm4.4-5.9c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.7 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.1.2-.3.2-.4.1-.1 0-.3 0-.4-.1-.1-.5-1.3-.7-1.8-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 3.9 3.4.5.2 1 .4 1.3.5.5.2 1 .1 1.4.1.4-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.4-.3z"/></svg>
+          WhatsApp
+        </a>
+        <a href="#" class="quick-contact-btn vb" title="Viber (broj dodajemo naknadno)">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.9 2 3 5.5 3 10.1c0 2.6 1.3 4.9 3.5 6.4-.1.9-.5 2.3-1.4 3.5-.1.2 0 .4.2.4 1.7-.2 3.3-1.1 4.4-1.9.7.1 1.5.2 2.3.2 5.1 0 9-3.5 9-8.1S17.1 2 12 2zm4.5 10.6c-.1.3-.7.7-1 .8-.3.1-.6.2-2-.4-1.7-.7-2.8-2.4-2.9-2.5-.1-.1-.7-.9-.7-1.8s.5-1.3.6-1.5c.1-.2.3-.2.5-.2h.3c.1 0 .3 0 .5.4l.6 1.4c.1.1.1.3 0 .4l-.3.4c-.1.1-.2.2-.1.4.1.2.5.9 1.1 1.4.7.6 1.3.8 1.5.9.2.1.3 0 .4-.1l.5-.6c.2-.2.3-.2.5-.1l1.3.7c.2.1.3.1.4.2.1.1.1.6 0 .9z"/></svg>
+          Viber
+        </a>
+      </div>
+      <div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg><span>ponude@weldcraft.rs (placeholder)</span></div>
+    </div>
+    <form class="contact-form" id="quoteForm">
+      <div class="form-row">
+        <div class="field"><label>Ime i prezime</label><input type="text" required placeholder="Marko Marković"></div>
+        <div class="field"><label>Kompanija</label><input type="text" placeholder="Naziv firme"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>E-mail</label><input type="email" required placeholder="marko@firma.rs"></div>
+        <div class="field"><label>Telefon</label><input type="tel" placeholder="+381 ..."></div>
+      </div>
+      <div class="field full" style="margin-bottom:16px;"><label>Kategorija proizvoda</label><select id="categorySelect"></select></div>
+      <div class="field full" style="margin-bottom:16px;"><label>Šifra proizvoda / dimenzije / količina</label><textarea rows="3" placeholder="npr. TL350 x 4 kom, ili SWD281515 x 1"></textarea></div>
+      <button type="submit" class="btn btn-accent">Pošalji upit</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <a href="#pocetna" class="brand"><span class="brand-text">Weld<span class="brand-accent">Craft</span></span></a>
+    <div class="footer-links"><a href="#stolovi">Proizvodi</a><a href="#o-nama">O nama</a><a href="#ponuda">Kontakt</a></div>
+    <div class="footer-note">DEMO SADRŽAJ — katalog D28 sistema</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastText">Upit poslat (demo)</span>
+</div>
+<div id="modalRoot"></div>
+
+<script>
+const icons = {
+  table: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="10" rx="1"/><path d="M5 14v6M19 14v6"/><circle cx="7" cy="9" r=".8" fill="currentColor" stroke="none"/><circle cx="12" cy="9" r=".8" fill="currentColor" stroke="none"/><circle cx="17" cy="9" r=".8" fill="currentColor" stroke="none"/></svg>`,
+  leg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M12 6v14M8 20h8"/></svg>`,
+  block: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></svg>`,
+  ruler: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 16l8-13 10 6-8 13z"/><path d="M9 6.5l1.5 1M11.3 3.3l1.5 1M15.8 8.6l1.5 1M13.5 4.9l1.5 1"/></svg>`,
+  clamp: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v9a3 3 0 003 3h1"/><path d="M18 3v6a3 3 0 01-3 3h-1"/><path d="M10 15v6M14 12v9"/></svg>`,
+  pin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="3" width="6" height="6" rx="1"/><path d="M12 9v9"/><path d="M9 18h6l-3 3-3-3z"/></svg>`,
+  wrench: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 00-5.6 5.1L3 17.5 5.5 20l6.1-6.1a4 4 0 005.1-5.6l-2.6 2.6-2-2 2.6-2.6z"/></svg>`,
+  cube3d: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z"/><path d="M12 2v9M12 11l8-4.5M12 11l-8-4.5"/></svg>`,
+  close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+  cart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M2 3h2l2.4 12.2a2 2 0 002 1.8h8.4a2 2 0 002-1.7L21 8H6"/></svg>`,
+  lock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`,
+  heart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7.5-4.9-10-9.3C.4 8.2 2 4.5 5.6 4c2-.3 3.8.6 5 2.2C11.8 4.6 13.6 3.7 15.6 4c3.6.5 5.2 4.2 3.6 7.7C16.5 16.1 12 21 12 21z"/></svg>`,
+  heartFilled: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 21s-7.5-4.9-10-9.3C.4 8.2 2 4.5 5.6 4c2-.3 3.8.6 5 2.2C11.8 4.6 13.6 3.7 15.6 4c3.6.5 5.2 4.2 3.6 7.7C16.5 16.1 12 21 12 21z"/></svg>`,
+  whatsapp: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.1L2 22l5.1-1.3C8.6 21.5 10.3 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3C4.4 15 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8zm4.4-5.9c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.7 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.1.2-.3.2-.4.1-.1 0-.3 0-.4-.1-.1-.5-1.3-.7-1.8-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 3.9 3.4.5.2 1 .4 1.3.5.5.2 1 .1 1.4.1.4-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.4-.3z"/></svg>`,
+  viber: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.9 2 3 5.5 3 10.1c0 2.6 1.3 4.9 3.5 6.4-.1.9-.5 2.3-1.4 3.5-.1.2 0 .4.2.4 1.7-.2 3.3-1.1 4.4-1.9.7.1 1.5.2 2.3.2 5.1 0 9-3.5 9-8.1S17.1 2 12 2zm4.5 10.6c-.1.3-.7.7-1 .8-.3.1-.6.2-2-.4-1.7-.7-2.8-2.4-2.9-2.5-.1-.1-.7-.9-.7-1.8s.5-1.3.6-1.5c.1-.2.3-.2.5-.2h.3c.1 0 .3 0 .5.4l.6 1.4c.1.1.1.3 0 .4l-.3.4c-.1.1-.2.2-.1.4.1.2.5.9 1.1 1.4.7.6 1.3.8 1.5.9.2.1.3 0 .4-.1l.5-.6c.2-.2.3-.2.5-.1l1.3.7c.2.1.3.1.4.2.1.1.1.6 0 .9z"/></svg>`,
+  pdf: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/><path d="M9 14h1.5a1.5 1.5 0 000-3H9v6M13 17v-6h2M17 11v6M17 14h1.5"/></svg>`
+};
+
+const CATEGORIES = [{"id": "stolovi", "label": "3D stolovi za zavarivanje", "icon": "table", "subcats": [{"name": "3D Liveni Stolovi", "image": "img/1785877558490_image.png", "sizes": [{"code": "CWD281010", "dims": "1000×1000×200"}, {"code": "CWD281212", "dims": "1200×1200×200"}, {"code": "CWD281510", "dims": "1500×1000×200"}, {"code": "CWD281515", "dims": "1500×1500×200"}, {"code": "CWD282010", "dims": "2000×1000×200"}, {"code": "CWD282412", "dims": "2400×1200×200"}, {"code": "CWD283015", "dims": "3000×1500×200"}, {"code": "CWD283020", "dims": "3000×2000×200"}, {"code": "CWD284020", "dims": "4000×2000×200"}]}, {"name": "3D Čelični Stolovi", "image": "img/1785877567221_image.png", "sizes": [{"code": "SWD281010", "dims": "1000×1000×200"}, {"code": "SWD281212", "dims": "1200×1200×200"}, {"code": "SWD281510", "dims": "1500×1000×200"}, {"code": "SWD281515", "dims": "1500×1500×200"}, {"code": "SWD282010", "dims": "2000×1000×200"}, {"code": "SWD282412", "dims": "2400×1200×200"}, {"code": "SWD283015", "dims": "3000×1500×200"}, {"code": "SWD283020", "dims": "3000×2000×200"}, {"code": "SWD284020", "dims": "4000×2000×200"}]}, {"name": "3D Čelični Stolovi - Nitrirani", "image": "img/1785877571615_image.png", "sizes": [{"code": "SWD281010P", "dims": "1000×1000×200"}, {"code": "SWD281212P", "dims": "1200×1200×200"}, {"code": "SWD281510P", "dims": "1500×1000×200"}, {"code": "SWD281515P", "dims": "1500×1500×200"}, {"code": "SWD282010P", "dims": "2000×1000×200"}, {"code": "SWD282412P", "dims": "2400×1200×200"}, {"code": "SWD283015P", "dims": "3000×1500×200"}, {"code": "SWD283020P", "dims": "3000×2000×200"}]}, {"name": "2D Liveni Stolovi", "image": "img/1785877575371_image.png", "sizes": [{"code": "CWD281010C", "dims": "1000×1000×150"}, {"code": "CWD281212C", "dims": "1200×1200×150"}, {"code": "CWD281510C", "dims": "1500×1000×150"}, {"code": "CWD281515C", "dims": "1500×1500×150"}, {"code": "CWD282010C", "dims": "2000×1000×150"}, {"code": "CWD282412C", "dims": "2400×1200×150"}, {"code": "CWD283015C", "dims": "3000×1500×150"}]}, {"name": "2D Čelični Stolovi", "image": "img/1785877642943_image.png", "sizes": [{"code": "SWD281010M", "dims": "1000×1000×150"}, {"code": "SWD281212M", "dims": "1200×1200×150"}, {"code": "SWD281510M", "dims": "1500×1000×150"}, {"code": "SWD281515M", "dims": "1500×1500×150"}, {"code": "SWD282010M", "dims": "2000×1000×150"}, {"code": "SWD282412M", "dims": "2400×1200×150"}, {"code": "SWD283015M", "dims": "3000×1500×150"}]}, {"name": "2D Čelični Stolovi - Nitrirani", "image": "img/1785877647304_image.png", "sizes": [{"code": "SWD281010PN", "dims": "1000×1000×150"}, {"code": "SWD281212PN", "dims": "1200×1200×150"}, {"code": "SWD281510PN", "dims": "1500×1000×150"}, {"code": "SWD281515PN", "dims": "1500×1500×150"}, {"code": "SWD282010PN", "dims": "2000×1000×150"}, {"code": "SWD282412PN", "dims": "2400×1200×150"}, {"code": "SWD283015PN", "dims": "3000×1500×150"}]}, {"name": "3D Osmostrani Čelični Stolovi", "image": "img/1785877653663_image.png", "sizes": [{"code": "SWT288080A", "dims": "800×800×200"}, {"code": "SWT281010A", "dims": "1000×1000×200"}, {"code": "SWT281212A", "dims": "1200×1200×200"}, {"code": "SWT281414A", "dims": "1400×1400×200"}]}]}, {"id": "nogari", "label": "Nogari", "icon": "leg", "subcats": [{"name": "Standardne noge", "image": "img/1785877736581_image.png", "sizes": [{"code": "TL200", "dims": "φ89×200"}, {"code": "TL350", "dims": "φ89×350"}, {"code": "TL450", "dims": "φ89×450"}, {"code": "TL620", "dims": "φ89×620"}]}, {"name": "Noge sa kočionim točkom", "image": "img/1785877739787_image.png", "sizes": [{"code": "TL200W", "dims": "φ89×200"}, {"code": "TL350W", "dims": "φ89×350"}, {"code": "TL450W", "dims": "φ89×450"}, {"code": "TL620W", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive tip A", "image": "img/1785877754706_image.png", "sizes": [{"code": "TL350A", "dims": "φ89×350"}, {"code": "TL450A", "dims": "φ89×450"}, {"code": "TL620A", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive tip B", "image": "img/1785877758394_image.png", "sizes": [{"code": "TL350B", "dims": "φ89×350"}, {"code": "TL450B", "dims": "φ89×450"}, {"code": "TL620B", "dims": "φ89×620"}]}, {"name": "Kvadratne noge podesive sa točkom", "image": "img/1785877764264_image.png", "sizes": [{"code": "TL350C", "dims": "φ89×350"}, {"code": "TL450C", "dims": "φ89×450"}, {"code": "TL620C", "dims": "φ89×620"}]}, {"name": "Osnovne baze (ram konstrukcija)", "image": "img/1785877772300_image.png", "sizes": [{"code": "FSB1010", "dims": "1000×1000×400"}, {"code": "FSB1212", "dims": "1200×1200×400"}, {"code": "FSB1510", "dims": "1500×1000×400"}, {"code": "FSB1515", "dims": "1500×1500×400"}, {"code": "FSB2010", "dims": "2000×1000×400"}, {"code": "FSB2412", "dims": "2400×1200×400"}, {"code": "FSB3015", "dims": "3000×1500×400"}, {"code": "FSB3020", "dims": "3000×2000×400"}, {"code": "FSB4020", "dims": "4000×2000×400"}]}]}, {"id": "blokovi", "label": "Graničnici i blokovi", "icon": "block", "subcats": [{"name": "U-profil kutija", "image": "img/1785877784563_image.png", "sizes": [{"code": "US280500", "dims": "500×200×200"}, {"code": "US281000", "dims": "1000×200×200"}, {"code": "US281500", "dims": "1500×200×200"}, {"code": "US282000", "dims": "2000×200×200"}, {"code": "US283000", "dims": "3000×200×200"}]}, {"name": "L-profil kutija", "image": "img/1785877799594_image.png", "sizes": [{"code": "LS280500", "dims": "500×200×100"}, {"code": "LS281000", "dims": "1000×200×100"}, {"code": "LS281200", "dims": "1200×200×100"}, {"code": "LS281500", "dims": "1500×200×100"}, {"code": "LS282000", "dims": "2000×200×100"}]}, {"name": "Potporni ugaoni profili", "image": "img/1785877806978_image.png", "sizes": [{"code": "LA283001", "dims": "275×100×300, levo"}, {"code": "LA283002", "dims": "275×100×300, desno"}, {"code": "LA286001", "dims": "375×100×600, levo"}, {"code": "LA286002", "dims": "375×100×600, desno"}, {"code": "LA288001", "dims": "375×100×800, levo"}, {"code": "LA288002", "dims": "375×100×800, desno"}]}, {"name": "Ugaoni blokovi", "image": "img/1785877957873_image.png", "sizes": [{"code": "CM28200", "dims": "200×200×175"}]}, {"name": "Kutijasti blokovi", "image": "img/1785877968108_image.png", "sizes": [{"code": "CB28300", "dims": "300×200×100"}, {"code": "CB28500", "dims": "500×200×100"}]}, {"name": "Uglomer", "image": "img/1785878004194_image.png", "sizes": [{"code": "PTA28500", "dims": "500×100×100"}]}]}, {"id": "pozicioniranje", "label": "Delovi za pozicioniranje", "icon": "ruler", "subcats": [{"name": "L graničnik", "sizes": [{"code": "LAB281751751", "dims": "175×50×175 (hole/hole)", "image": "img/1785878207790_image.png"}, {"code": "LAB281751752", "dims": "175×50×175 (slot/slot)", "image": "img/1785878210595_image.png"}, {"code": "LAB281751753", "dims": "175×50×175 (hole/slot)", "image": "img/1785878221822_image.png"}, {"code": "LAB2817575", "dims": "175×50×75", "image": "img/1785878223134_image.png"}, {"code": "LAB287575", "dims": "75×50×75", "image": "img/1785878224367_image.png"}, {"code": "LAB28275175", "dims": "175×50×275", "image": "img/1785878225391_image.png"}]}, {"name": "Univerzalni graničnik", "sizes": [{"code": "US281001", "dims": "100×50×25", "image": "img/1785878564037_image.png"}, {"code": "US281002", "dims": "100×50×25", "image": "img/1785878565347_image.png"}, {"code": "US28150", "dims": "150×50×25", "image": "img/1785878566241_image.png"}, {"code": "US282251", "dims": "225×50×25", "image": "img/1785878567307_image.png"}, {"code": "US282252", "dims": "225×50×25", "image": "img/1785878568417_image.png"}, {"code": "US283001", "dims": "300×50×25", "image": "img/1785878612601_image.png"}, {"code": "US283002", "dims": "300×50×25", "image": "img/1785878613863_image.png"}, {"code": "US28500", "dims": "500×100×25", "image": "img/1785878614800_image.png"}, {"code": "US28800", "dims": "800×100×25", "image": "img/1785878616049_image.png"}, {"code": "US2810002", "dims": "1000×100×25", "image": "img/1785878617189_image.png"}]}, {"name": "Ugaoni graničnik", "sizes": [{"code": "PAL28250", "dims": "250×150×5", "image": "img/1785878660794_image.png"}]}, {"name": "Ravni L graničnik", "sizes": [{"code": "FAB28175", "dims": "175×175×25", "image": "img/1785878739515_image.png"}, {"code": "FAB282751", "dims": "275×175×25", "image": "img/1785878742531_image.png"}, {"code": "FAB282752", "dims": "275×225×25", "image": "img/1785878828450_image.png"}, {"code": "FAB28325", "dims": "325×225×25", "image": "img/1785878831616_image.png"}, {"code": "FAB28500", "dims": "500×375×25", "image": "img/1785878834484_image.png"}]}, {"name": "V graničnik", "sizes": [{"code": "VBL285890", "dims": "φ58×90°", "image": "img/1785878884908_image.png"}, {"code": "VBL2858120", "dims": "φ58×120°", "image": "img/1785878887450_image.png"}, {"code": "VBL28108120", "dims": "φ108×120°", "image": "img/1785878890021_image.png"}, {"code": "VBL2858150", "dims": "φ58×150°", "image": "img/1785878894265_image.png"}, {"code": "VBL28108150", "dims": "φ108×150°", "image": "img/1785878896103_image.png"}, {"code": "VBL28138150", "dims": "φ138×150°", "image": "img/1785878897626_image.png"}]}]}, {"id": "stezanje", "label": "Delovi za stezanje", "icon": "clamp", "subcats": [{"name": "Šraf stege", "sizes": [{"code": "SC283001", "dims": "180°, plastična ručka · 300×300", "image": "img/1785879027355_image.png"}, {"code": "SC283002", "dims": "180°, pokretna ručka · 300×300", "image": "img/1785879029260_image.png"}, {"code": "SC283003", "dims": "90°, plastična ručka · 300×150", "image": "img/1785879031845_image.png"}, {"code": "SC283004", "dims": "90°, pokretna ručka · 300×150", "image": "img/1785879033987_image.png"}, {"code": "SC283005", "dims": "45°, plastična ručka · 300×300", "image": "img/1785879035690_image.png"}, {"code": "SC283006", "dims": "45°, pokretna ručka · 300×300", "image": "img/1785879037226_image.png"}]}, {"name": "Kompenzacione stege", "sizes": [{"code": "CSC283001", "dims": "Plastična ručka · 300×150", "image": "img/1785880335308_image.png"}, {"code": "CSC283002", "dims": "Plastična ručka · 300×200", "image": "img/1785880350925_image.png"}, {"code": "CSC283003", "dims": "Pokretna ručka · 300×150", "image": "img/1785880353688_image.png"}, {"code": "CSC283004", "dims": "Pokretna ručka · 300×200", "image": "img/1785880353858_image.png"}]}, {"name": "Šraf tip stezanja", "sizes": [{"code": "STC283005", "dims": "300×300", "image": "img/1785880469466_image.png"}, {"code": "STC283005", "dims": "45°/90°, 195mm", "image": "img/1785880473275_image.png"}]}, {"name": "Brze stege", "sizes": [{"code": "TC2001001", "dims": "Disk vertikalna · φ58×20×28", "image": "img/1785880503438_image.png"}, {"code": "TC2001501", "dims": "Disk push-pull · φ68×20×28", "image": "img/1785880505305_image.png"}, {"code": "TC2001502", "dims": "Disk horizontalna · φ68×20×28", "image": "img/1785880507702_image.png"}, {"code": "TC2001002", "dims": "Kvadratna disk vertikalna · 130×65×25", "image": "img/1785880508743_image.png"}, {"code": "TC2001003", "dims": "Kvadratna disk push-pull · 130×65×25", "image": "img/1785880509763_image.png"}, {"code": "TC2001503", "dims": "Kvadratna disk horizontalna · 130×50×25", "image": "img/1785880510746_image.png"}]}, {"name": "Ugaone čaure", "sizes": [{"code": "CS281", "dims": "90°", "image": "img/1785880586189_image.png"}, {"code": "CS282", "dims": "45°", "image": "img/1785880587061_image.png"}, {"code": "CS283", "dims": "Paralelna · 180°", "image": "img/1785880588117_image.png"}, {"code": "CS284", "dims": "Vertikalna · 90°", "image": "img/1785880588945_image.png"}]}, {"name": "Ecentrične ploče", "sizes": [{"code": "ETL7525", "dims": "φ75×25", "image": "img/1785880610821_image.png"}, {"code": "ETL10025", "dims": "φ100×25", "image": "img/1785880611231_image.png"}]}, {"name": "Mostovi", "sizes": [{"code": "CB1701", "dims": "Dvotačni · 190×30×180°", "image": "img/1785880649166_image.png"}, {"code": "CB1702", "dims": "Trotačni · 90×30×120°", "image": "img/1785880650022_image.png"}]}]}, {"id": "pinovi", "label": "Zatezni pinovi", "icon": "pin", "subcats": [{"name": "Brzi pinovi", "image": "img/1785881020243_image.png", "sizes": [{"code": "RLB2824", "dims": "φ28×24"}, {"code": "RLB2850", "dims": "φ28×50"}, {"code": "RLB2875", "dims": "φ28×75"}]}, {"name": "Upušteni pinovi", "image": "img/1785880842015_image.png", "sizes": [{"code": "CHLB2850", "dims": "φ28×50"}, {"code": "CHLB2875", "dims": "φ28×75"}]}, {"name": "Upušteni brzi pinovi", "image": "img/1785881071162_image.png", "sizes": [{"code": "CHRLB2850", "dims": "φ28×50"}, {"code": "CHRLB2875", "dims": "φ28×75"}]}, {"name": "Pozicioni pin", "image": "img/1785881105715_image.png", "sizes": [{"code": "CHRLB2880", "dims": "φ40×φ28×80"}]}, {"name": "Brzi pin sa ručkom", "image": "img/1785881127195_image.png", "sizes": [{"code": "RLBH2850", "dims": "φ28×50"}]}, {"name": "Magnetni pin", "image": "img/1785881136837_image.png", "sizes": [{"code": "MLB2850", "dims": "φ28×50"}]}, {"name": "Povezujući pin", "image": "img/1785881149871_image.png", "sizes": [{"code": "CLB2850", "dims": "φ28×50"}]}]}, {"id": "pribor", "label": "Pribor", "icon": "wrench", "subcats": [{"name": "Regulator visine", "image": "img/1785881313778_image.png", "sizes": [{"code": "AS2880", "dims": "φ80×100"}]}, {"name": "Podizni prsten", "image": "img/1785881312734_image.png", "sizes": [{"code": "LR282", "dims": "2T nosivost"}]}, {"name": "Stezna cev", "image": "img/1785881311782_image.png", "sizes": [{"code": "CS28300", "dims": "φ28×300"}, {"code": "CS28600", "dims": "φ28×600"}]}, {"name": "Kolica za alat", "image": "img/1785881310762_image.png", "sizes": [{"code": "AC281000600", "dims": "1000×600×1025"}]}, {"name": "Uzemljivač", "image": "img/1785881309391_image.png", "sizes": [{"code": "GC28", "dims": "120×35"}]}, {"name": "Podloške", "image": "img/1785881307926_image.png", "sizes": [{"code": "S280520", "dims": "0.5–50 mm set"}]}, {"name": "Držač pištolja", "image": "img/1785881305638_image.png", "sizes": [{"code": "BH28200", "dims": "200 mm"}]}, {"name": "Imbus ključ", "image": "img/1785881303561_image.png", "sizes": [{"code": "HAW28", "dims": "150 mm"}]}, {"name": "Najlonska četka", "image": "img/1785881301504_image.png", "sizes": [{"code": "RB28", "dims": "φ30×210"}]}, {"name": "Brusni kamen", "image": "img/1785881299241_image.png", "sizes": [{"code": "BS28", "dims": "200×50×25"}]}, {"name": "Uljarica", "image": "img/1785881296788_image.png", "sizes": [{"code": "SB28", "dims": "200 ml"}]}]}];
+
+/* ---------- HELPERS ---------- */
+function catNum(ci){ return String(ci+1)+'.'; }
+function subNum(ci,si){ return `${ci+1}.${si+1}.`; }
+function varNum(ci,si,vi){ return `${ci+1}.${si+1}.${vi+1}.`; }
+function cardImageFor(subcat){ return subcat.image || (subcat.sizes[0] && subcat.sizes[0].image) || ''; }
+
+/* ---------- RENDER: PILLS + SELECT + CATALOG + SIDEBAR ---------- */
+const subnav = document.getElementById('subnav');
+const catalog = document.getElementById('catalog');
+const categorySelect = document.getElementById('categorySelect');
+const sidebarTree = document.getElementById('sidebarTree');
+const mobileNavPanel = document.getElementById('mobileNavPanel');
+const mobileCatList = document.getElementById('mobileCatList');
+const mobileCatRail = document.getElementById('mobileCatRail');
+
+function renderCard(subcat, catIdx, subIdx){
+  const system = subcat.system || 'D28';
+  const count = subcat.sizes.length;
+  const img = cardImageFor(subcat);
+  const nStr = subNum(catIdx, subIdx);
+  return `
+  <div class="product-card" data-system="${system}" data-cat="${catIdx}" data-subidx="${subIdx}">
+    <span class="corner c-tl"></span><span class="corner c-tr"></span><span class="corner c-bl"></span><span class="corner c-br"></span>
+    <div class="card-image">
+      <img src="${img}" alt="${subcat.name}" loading="lazy">
+    </div>
+    <p class="p-num">${nStr}</p>
+    <p class="p-name">${subcat.name}</p>
+    <p class="p-size-count">${count} varijant${count===1?'a':(count<5?'e':'a')}</p>
+  </div>`;
+}
+
+CATEGORIES.forEach((cat, catIdx)=>{
+  const cNum = catNum(catIdx);
+  // pill
+  const pill = document.createElement('a');
+  pill.href = '#'+cat.id;
+  pill.className = 'pill';
+  pill.dataset.target = cat.id;
+  pill.innerHTML = icons[cat.icon] + `<span>${cNum} ${cat.label}</span>`;
+  subnav.appendChild(pill);
+
+  // mobile vertical rail item
+  const railItem = document.createElement('a');
+  railItem.href = '#'+cat.id;
+  railItem.className = 'mobile-cat-rail-item';
+  railItem.dataset.target = cat.id;
+  railItem.title = `${cNum} ${cat.label}`;
+  railItem.innerHTML = icons[cat.icon];
+  mobileCatRail.appendChild(railItem);
+
+  // select option
+  const opt = document.createElement('option');
+  opt.value = cat.id; opt.textContent = `${cNum} ${cat.label}`;
+  categorySelect.appendChild(opt);
+
+  // catalog section
+  const section = document.createElement('section');
+  section.className = 'cat-section';
+  section.id = cat.id;
+  const cardsHtml = cat.subcats.map((sc,si)=>renderCard(sc, catIdx, si)).join('');
+  section.innerHTML = `
+    <div class="cat-header">
+      <div class="cat-title-group">
+        <div class="cat-icon">${icons[cat.icon]}</div>
+        <div>
+          <h2><span class="num">${cNum}</span>${cat.label}</h2>
+          <div class="cat-count">${cat.subcats.length} podkategorija</div>
+        </div>
+      </div>
+    </div>
+    <div class="product-grid">${cardsHtml}</div>
+    <p class="empty-state" style="display:none;">Trenutno nemamo proizvode iz ove kategorije za izabrani sistem.</p>
+  `;
+  catalog.appendChild(section);
+
+  // sidebar tree
+  const catDetails = document.createElement('details');
+  catDetails.className = 'tree-cat';
+  catDetails.dataset.cat = catIdx;
+  const catSummary = document.createElement('summary');
+  catSummary.innerHTML = icons[cat.icon] + `<span>${cNum} ${cat.label}</span>`;
+  catDetails.appendChild(catSummary);
+  const subList = document.createElement('div');
+  subList.className = 'tree-sub-list';
+  cat.subcats.forEach((subcat,si)=>{
+    const sNum = subNum(catIdx, si);
+    const subDetails = document.createElement('details');
+    subDetails.className = 'tree-sub';
+    subDetails.dataset.cat = catIdx;
+    subDetails.dataset.subidx = si;
+    const subSummary = document.createElement('summary');
+    subSummary.textContent = `${sNum} ${subcat.name}`;
+    subDetails.appendChild(subSummary);
+    const sizesList = document.createElement('ul');
+    sizesList.className = 'tree-sizes';
+    subcat.sizes.forEach((s,vi)=>{
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="mono">${varNum(catIdx,si,vi)}</span><span class="tree-dim">${s.dims}</span>`;
+      li.addEventListener('click', ()=>{ openProductModal(catIdx, si, vi); });
+      sizesList.appendChild(li);
+    });
+    subDetails.appendChild(sizesList);
+    subList.appendChild(subDetails);
+  });
+  catDetails.appendChild(subList);
+  sidebarTree.appendChild(catDetails);
+
+  // mobile category accordion (2 levels only: category -> subcategory, tapping subcategory opens the modal)
+  const mCatDetails = document.createElement('details');
+  mCatDetails.className = 'mobile-cat-details';
+  const mCatSummary = document.createElement('summary');
+  mCatSummary.textContent = `${cNum} ${cat.label}`;
+  mCatDetails.appendChild(mCatSummary);
+  const mSubList = document.createElement('div');
+  mSubList.className = 'mobile-subcat-list';
+  cat.subcats.forEach((subcat,si)=>{
+    const a = document.createElement('a');
+    a.href = '#';
+    a.textContent = `${subNum(catIdx,si)} ${subcat.name}`;
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
+      mobileNavPanel.classList.remove('open');
+      openProductModal(catIdx, si);
+    });
+    mSubList.appendChild(a);
+  });
+  mCatDetails.appendChild(mSubList);
+  mobileCatList.appendChild(mCatDetails);
+});
+
+function markActiveTreeItem(catIdx, subIdx){
+  clearActiveTreeItem();
+  const el = sidebarTree.querySelector(`.tree-sub[data-cat="${catIdx}"][data-subidx="${subIdx}"]`);
+  if(el) el.classList.add('active-modal');
+  const catEl = sidebarTree.querySelector(`.tree-cat[data-cat="${catIdx}"]`);
+  if(catEl) catEl.classList.add('cat-active');
+}
+function clearActiveTreeItem(){
+  const prev = sidebarTree.querySelector('.tree-sub.active-modal');
+  if(prev) prev.classList.remove('active-modal');
+  const prevCat = sidebarTree.querySelector('.tree-cat.cat-active');
+  if(prevCat) prevCat.classList.remove('cat-active');
+}
+
+/* ---------- SCROLL SPY (pills + mobile rail) ---------- */
+const pills = document.querySelectorAll('.pill');
+const railItems = document.querySelectorAll('.mobile-cat-rail-item');
+const sections = document.querySelectorAll('.cat-section');
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      pills.forEach(p=>{
+        const isActive = p.dataset.target === entry.target.id;
+        p.classList.toggle('active', isActive);
+        if(isActive) p.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+      });
+      railItems.forEach(r=>r.classList.toggle('active', r.dataset.target === entry.target.id));
+    }
+  });
+},{ rootMargin:'-160px 0px -70% 0px' });
+sections.forEach(s=>observer.observe(s));
+
+/* ---------- MAIN NAV ACTIVE STATE ---------- */
+const mainNavLinks = document.querySelectorAll('nav.main-nav a');
+function setActiveNav(id){ mainNavLinks.forEach(link=>{ link.classList.toggle('active', link.getAttribute('href') === '#'+id); }); }
+const heroEl = document.getElementById('pocetna');
+const catalogEl = document.getElementById('catalog');
+const contactEl = document.getElementById('ponuda');
+const navObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting) return;
+    if(entry.target.id === 'pocetna') setActiveNav('pocetna');
+    else if(entry.target.id === 'catalog') setActiveNav('stolovi');
+    else if(entry.target.id === 'ponuda') setActiveNav('ponuda');
+  });
+},{ rootMargin:'-90px 0px -65% 0px' });
+[heroEl, catalogEl, contactEl].forEach(el=>el && navObserver.observe(el));
+
+/* ---------- THEME TOGGLE ---------- */
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', ()=>{
+  const html = document.documentElement;
+  const isDark = html.dataset.theme === 'dark';
+  const next = isDark ? 'light' : 'dark';
+  html.dataset.theme = next;
+  themeToggle.classList.remove('flashing');
+  void themeToggle.offsetWidth; // restart animation
+  themeToggle.classList.add('flashing');
+  try{ localStorage.setItem('weldcraft-theme', next); }catch(e){}
+});
+
+/* ---------- AUTO DAY/NIGHT THEME (only when no manual choice saved) ---------- */
+function applyAutoTheme(){
+  try{
+    if(localStorage.getItem('weldcraft-theme')) return; // user chose manually, never override
+  }catch(e){}
+  const h = new Date().getHours();
+  const autoTheme = (h >= 18 || h < 6) ? 'dark' : 'light';
+  if(document.documentElement.dataset.theme !== autoTheme){
+    document.documentElement.dataset.theme = autoTheme;
+  }
+}
+setInterval(applyAutoTheme, 5 * 60 * 1000);
+
+/* ---------- MOBILE NAV (hamburger) ---------- */
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+if(hamburgerBtn){
+  hamburgerBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    mobileNavPanel.classList.toggle('open');
+  });
+  mobileNavPanel.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=>mobileNavPanel.classList.remove('open'));
+  });
+  document.addEventListener('click', (e)=>{
+    if(!mobileNavPanel.contains(e.target) && e.target !== hamburgerBtn && !hamburgerBtn.contains(e.target)){
+      mobileNavPanel.classList.remove('open');
+    }
+  });
+}
+
+/* ---------- SYSTEM FILTER ---------- */
+const sysButtons = document.querySelectorAll('.sys-btn');
+function applySystemFilter(system){
+  sysButtons.forEach(btn=>btn.classList.toggle('active', btn.dataset.system === system));
+  document.querySelectorAll('.cat-section').forEach(section=>{
+    const cards = section.querySelectorAll('.product-card');
+    let visibleCount = 0;
+    cards.forEach(card=>{ const match = card.dataset.system === system; card.style.display = match ? '' : 'none'; if(match) visibleCount++; });
+    const emptyState = section.querySelector('.empty-state');
+    const grid = section.querySelector('.product-grid');
+    if(emptyState){ emptyState.style.display = visibleCount === 0 ? 'block' : 'none'; }
+    if(grid){ grid.style.display = visibleCount === 0 ? 'none' : 'grid'; }
+  });
+}
+sysButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(btn.dataset.system !== 'D28'){ showToast(btn.dataset.system+' sistem — uskoro dostupno'); return; }
+    applySystemFilter(btn.dataset.system);
+  });
+});
+applySystemFilter('D28');
+
+/* ---------- TOAST ---------- */
+const toast = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+function showToast(msg){ toastText.textContent = msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), 2800); }
+
+/* ---------- CART ---------- */
+let cartItems = [];
+const cartPanel = document.getElementById('cartPanel');
+function addToCart(item){
+  const existing = cartItems.find(it=>it.code === item.code && it.legsName === item.legsName);
+  if(existing){ existing.qty += item.qty; }
+  else { cartItems.push(item); }
+  renderCartPanel();
+}
+function renderCartPanel(){
+  const empty = cartItems.length === 0;
+  const totalQty = cartItems.reduce((sum,it)=>sum+it.qty, 0);
+  cartPanel.innerHTML = `
+    <div class="cart-header"><h3>${icons.cart} Vaša lista</h3><span class="cart-count">${totalQty}</span></div>
+    ${empty ? `<p class="cart-empty">Još ništa nije izabrano. Klikni na proizvod u katalogu da ga podesiš i dodaš na listu.</p>`
+      : `<ul class="cart-list">${cartItems.map((it,i)=>`
+          <li class="cart-item">
+            <img src="${it.image}" alt="">
+            <div>
+              <button class="cart-remove" data-remove-idx="${i}" title="Ukloni">${icons.close}</button>
+              <p class="cart-item-name">${it.num} ${it.subcatName} ${it.qty>1?'<span class="cart-qty">× '+it.qty+'</span>':''}</p>
+              <div class="cart-item-meta">${it.code} · ${it.dims}</div>
+            </div>
+          </li>`).join('')}</ul>
+        <button class="btn btn-accent cart-submit" id="cartSubmitBtn">Zatraži ponudu za listu</button>
+        <button class="btn btn-ghost cart-submit" id="cartPdfBtn">${icons.pdf} Preuzmi PDF katalog</button>`}
+  `;
+  if(!empty){
+    document.getElementById('cartSubmitBtn').addEventListener('click', ()=>{
+      const summary = cartItems.map(it=>`${it.num} ${it.subcatName} × ${it.qty} — ${it.code} (${it.dims})`).join('\\n');
+      document.querySelector('#quoteForm textarea').value = summary;
+      document.getElementById('ponuda').scrollIntoView({behavior:'smooth'});
+    });
+    document.getElementById('cartPdfBtn').addEventListener('click', openPdfPreview);
+  }
+  cartPanel.querySelectorAll('[data-remove-idx]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ cartItems.splice(Number(btn.dataset.removeIdx), 1); renderCartPanel(); });
+  });
+}
+renderCartPanel();
+
+/* ---------- PDF PREVIEW / PRINT ---------- */
+function openPdfPreview(){
+  if(cartItems.length === 0){ showToast('Vaša lista je prazna.'); return; }
+  const baseHref = location.href.substring(0, location.href.lastIndexOf('/')+1);
+  const w = window.open('', '_blank', 'width=880,height=1000');
+  if(!w){ showToast('Browser je blokirao popup. Dozvoli popup prozore za ovaj sajt.'); return; }
+  const rows = cartItems.map(it=>`
+    <tr>
+      <td><img src="${it.image}" alt=""></td>
+      <td><strong>${it.num} ${it.subcatName}</strong></td>
+      <td class="mono">${it.code}</td>
+      <td>${it.dims}</td>
+      <td style="text-align:center;">${it.qty}</td>
+    </tr>`).join('');
+  const html = `<!DOCTYPE html><html lang="sr"><head><meta charset="utf-8">
+    <base href="${baseHref}">
+    <title>WeldCraft — Lista proizvoda</title>
+    <style>
+      *{box-sizing:border-box;}
+      body{font-family:Arial,Helvetica,sans-serif; padding:36px; color:#191A17; max-width:800px; margin:0 auto;}
+      .mono{font-family:'Courier New',monospace; font-size:12px;}
+      h1{font-size:22px; margin:0 0 2px; letter-spacing:.5px;}
+      h1 span{color:#FF5A1F;}
+      .sub{color:#777; font-size:12px; margin:0 0 28px;}
+      table{width:100%; border-collapse:collapse;}
+      th,td{padding:10px 8px; border-bottom:1px solid #e2e2e2; text-align:left; font-size:13px; vertical-align:middle;}
+      th{text-transform:uppercase; font-size:10px; letter-spacing:.4px; color:#999; font-weight:600;}
+      td img{width:52px; height:52px; object-fit:contain; background:#fff; border:1px solid #e2e2e2; border-radius:4px;}
+      .save-btn{margin-top:28px; padding:12px 22px; background:#FF5A1F; color:#fff; border:none; border-radius:6px; font-weight:700; font-size:14px; cursor:pointer; letter-spacing:.3px;}
+      .footer-note{margin-top:28px; font-size:11px; color:#999;}
+      @media print{ .save-btn{display:none;} body{padding:0;} }
+    </style></head>
+    <body>
+      <h1>Weld<span>Craft</span> — Lista proizvoda</h1>
+      <p class="sub">Generisano ${new Date().toLocaleDateString('sr-RS')} · weldcraft.rs (demo)</p>
+      <table>
+        <thead><tr><th>Slika</th><th>Proizvod</th><th>Šifra</th><th>Dimenzije</th><th>Kol.</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <button class="save-btn" onclick="window.print()">Sačuvaj kao PDF</button>
+      <p class="footer-note">Ovo je informativna lista, ne i zvanična ponuda. Za cenu i rok isporuke pošalji upit preko sajta.</p>
+    </body></html>`;
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+}
+
+/* ---------- WISHLIST ---------- */
+let wishlistItems = []; // array of "catIdx::subIdx" keys
+const wishlistBadge = document.getElementById('wishlistBadge');
+const wishlistResults = document.getElementById('wishlistResults');
+const headerWishlist = document.getElementById('headerWishlist');
+const wishlistToggleBtn = document.getElementById('wishlistToggleBtn');
+
+function toggleWishlist(key, btnEl){
+  const idx = wishlistItems.indexOf(key);
+  if(idx > -1){ wishlistItems.splice(idx,1); }
+  else { wishlistItems.push(key); }
+  document.querySelectorAll(`.wishlist-btn[data-wish-key="${key}"]`).forEach(b=>{
+    b.classList.toggle('active', wishlistItems.includes(key));
+    b.innerHTML = wishlistItems.includes(key) ? icons.heartFilled : icons.heart;
+  });
+  renderWishlistPanel();
+}
+function renderWishlistPanel(){
+  wishlistBadge.textContent = wishlistItems.length;
+  wishlistBadge.style.display = wishlistItems.length > 0 ? 'flex' : 'none';
+  if(wishlistItems.length === 0){
+    wishlistResults.innerHTML = `<p class="flyout-empty">Još nemaš omiljene proizvode. Klikni na ♡ na kartici proizvoda.</p>`;
+    return;
+  }
+  wishlistResults.innerHTML = wishlistItems.map(key=>{
+    const [catIdx, subIdx] = key.split('::').map(Number);
+    const cat = CATEGORIES[catIdx];
+    const subcat = cat.subcats[subIdx];
+    const img = cardImageFor(subcat);
+    return `
+    <div class="flyout-item" data-cat="${catIdx}" data-subidx="${subIdx}">
+      <button class="flyout-item-remove" data-wish-remove="${key}" title="Ukloni">${icons.close}</button>
+      <img src="${img}" alt="">
+      <div><p class="flyout-item-name">${subNum(catIdx,subIdx)} ${subcat.name}</p><p class="flyout-item-meta">${catNum(catIdx)} ${cat.label}</p></div>
+    </div>`;
+  }).join('');
+}
+renderWishlistPanel();
+
+wishlistResults.addEventListener('click', (e)=>{
+  const removeBtn = e.target.closest('[data-wish-remove]');
+  if(removeBtn){ e.stopPropagation(); toggleWishlist(removeBtn.dataset.wishRemove); return; }
+  const item = e.target.closest('.flyout-item');
+  if(item){
+    headerWishlist.classList.remove('open');
+    openProductModal(Number(item.dataset.cat), Number(item.dataset.subidx));
+  }
+});
+wishlistToggleBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  document.getElementById('headerSearch').classList.remove('open');
+  headerWishlist.classList.toggle('open');
+});
+
+/* ---------- SEARCH ---------- */
+const headerSearch = document.getElementById('headerSearch');
+const searchToggleBtn = document.getElementById('searchToggleBtn');
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+function buildSearchIndex(){
+  const index = [];
+  CATEGORIES.forEach((cat,catIdx)=>{
+    cat.subcats.forEach((subcat,subIdx)=>{
+      const codes = subcat.sizes.map(s=>s.code).join(' ');
+      const dims = subcat.sizes.map(s=>s.dims).join(' ');
+      index.push({ catIdx, subIdx, cat, subcat, haystack: (subcat.name+' '+codes+' '+dims+' '+cat.label).toLowerCase() });
+    });
+  });
+  return index;
+}
+const searchIndex = buildSearchIndex();
+
+function renderSearchResults(query){
+  const q = query.trim().toLowerCase();
+  if(q.length === 0){
+    searchResults.innerHTML = `<p class="flyout-empty">Ukucaj šifru, naziv ili dimenziju da pretražiš katalog.</p>`;
+    return;
+  }
+  const matches = searchIndex.filter(item=>item.haystack.includes(q)).slice(0,10);
+  if(matches.length === 0){
+    searchResults.innerHTML = `<p class="flyout-empty">Nema rezultata za "${query}".</p>`;
+    return;
+  }
+  searchResults.innerHTML = matches.map(m=>{
+    const img = cardImageFor(m.subcat);
+    return `
+    <div class="flyout-item" data-cat="${m.catIdx}" data-subidx="${m.subIdx}">
+      <img src="${img}" alt="">
+      <div><p class="flyout-item-name">${subNum(m.catIdx,m.subIdx)} ${m.subcat.name}</p><p class="flyout-item-meta">${catNum(m.catIdx)} ${m.cat.label}</p></div>
+    </div>`;
+  }).join('');
+}
+renderSearchResults('');
+
+searchInput.addEventListener('input', ()=>renderSearchResults(searchInput.value));
+searchResults.addEventListener('click', (e)=>{
+  const item = e.target.closest('.flyout-item');
+  if(item){
+    headerSearch.classList.remove('open');
+    openProductModal(Number(item.dataset.cat), Number(item.dataset.subidx));
+  }
+});
+searchToggleBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  headerWishlist.classList.remove('open');
+  headerSearch.classList.toggle('open');
+  if(headerSearch.classList.contains('open')) setTimeout(()=>searchInput.focus(), 50);
+});
+
+document.addEventListener('click', (e)=>{
+  if(!headerSearch.contains(e.target)) headerSearch.classList.remove('open');
+  if(!headerWishlist.contains(e.target)) headerWishlist.classList.remove('open');
+});
+
+/* ---------- 3D MODEL VIEWER (tables only) ---------- */
+let cachedTableModel = null, modelLoadPromise = null;
+function loadTableModel(){
+  if(cachedTableModel) return Promise.resolve(cachedTableModel);
+  if(modelLoadPromise) return modelLoadPromise;
+  modelLoadPromise = new Promise((resolve,reject)=>{
+    const loader = new THREE.GLTFLoader();
+    loader.load('3D_element.glb', gltf=>{ cachedTableModel = gltf.scene; resolve(cachedTableModel); }, undefined, reject);
+  });
+  return modelLoadPromise;
+}
+function initModelViewer(container){
+  if(typeof THREE === 'undefined' || !THREE.GLTFLoader || !THREE.OrbitControls){
+    const errEl = document.createElement('p');
+    errEl.style.cssText = 'color:var(--text-dim);font-size:11.5px;padding:16px;text-align:center;line-height:1.6;';
+    errEl.textContent = 'Three.js biblioteka se nije učitala (nema internet konekcije).';
+    container.appendChild(errEl);
+    return function(){};
+  }
+  const width = container.clientWidth || 400, height = container.clientHeight || 320;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, width/height, 0.1, 1000);
+  camera.position.set(2.4, 1.8, 2.4);
+  const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.insertBefore(renderer.domElement, container.firstChild);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.1); dirLight.position.set(5,10,7); scene.add(dirLight);
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.4); fillLight.position.set(-6,4,-4); scene.add(fillLight);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.08; controls.autoRotate = true; controls.autoRotateSpeed = 1.4;
+  controls.minDistance = 1; controls.maxDistance = 8;
+  let frameId;
+  loadTableModel().then(model=>{
+    const instance = model.clone(true);
+    const box = new THREE.Box3().setFromObject(instance);
+    const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
+    instance.position.sub(center);
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    instance.scale.setScalar(1.7 / maxDim);
+    scene.add(instance);
+  }).catch(err=>{
+    const errEl = document.createElement('p');
+    errEl.style.cssText = 'color:var(--text-dim);font-size:11.5px;padding:16px;text-align:center;line-height:1.6;';
+    errEl.textContent = 'Model se trenutno ne može učitati.';
+    container.appendChild(errEl);
+  });
+  function animate(){ frameId = requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
+  animate();
+  return function dispose(){ cancelAnimationFrame(frameId); controls.dispose(); renderer.dispose(); };
+}
+
+/* ---------- PRODUCT CONFIG MODAL ---------- */
+const modalRoot = document.getElementById('modalRoot');
+const stoloviCat = CATEGORIES.find(c=>c.id==='stolovi');
+const nogariCat = CATEGORIES.find(c=>c.id==='nogari');
+const stoloviIdx = CATEGORIES.indexOf(stoloviCat);
+const nogariIdx = CATEGORIES.indexOf(nogariCat);
+
+function openProductModal(catIdx, subIdx, variantIdx){
+  variantIdx = variantIdx || 0;
+
+  const catNavHtml = CATEGORIES.map((c,i)=>`<button class="modal-catnav-item" data-cat-jump="${i}">${icons[c.icon]}<span>${catNum(i)} ${c.label}</span></button>`).join('');
+
+  modalRoot.innerHTML = `
+    <div class="modal-overlay" id="productModal">
+      <div class="modal-box">
+        <div class="modal-catnav" id="modalCatNav">${catNavHtml}</div>
+        <div class="modal-viewer has-image" id="modalViewerPanel">
+          <img class="main-image" id="modalMainImage" src="" alt="">
+        </div>
+        <div class="modal-form-wrap">
+          <div class="modal-form-scroll">
+            <div class="modal-eyebrow-row">
+              <p class="modal-eyebrow" id="modalEyebrow"></p>
+              <div class="modal-icon-row">
+                <button class="modal-icon-action wishlist-btn" id="modalWishlistBtn" title="Dodaj u omiljene">${icons.heart}</button>
+                <button class="modal-icon-action modal-close" id="modalCloseBtn" title="Zatvori">${icons.close}</button>
+              </div>
+            </div>
+            <div class="modal-title-row">
+              <h3 class="modal-title" id="modalName"></h3>
+              <div class="modal-add-row">
+                <button class="btn btn-accent modal-add-btn" id="modalAddBtn">
+                  <span class="add-label-full">Dodaj u korpu</span>
+                  <span class="add-label-short">Dodaj ${icons.cart}</span>
+                </button>
+                <div class="modal-qty-field">
+                  <label>Kol.</label>
+                  <input type="number" id="modalQty" value="1" min="1" step="1">
+                </div>
+              </div>
+            </div>
+            <p class="modal-dims" id="modalDims"></p>
+
+            <div class="modal-field">
+              <label id="modalSubLabel">Podkategorija</label>
+              <div class="custom-select" id="modalSubCustom">
+                <button type="button" class="custom-select-btn" id="modalSubBtn"></button>
+                <div class="custom-select-list" id="modalSubList"></div>
+              </div>
+            </div>
+
+            <div class="modal-field" id="modalVariantFieldWrap"></div>
+            <div class="modal-field" id="modalLegsFieldWrap"></div>
+
+            <div class="modal-specs">
+              <h4>Specifikacije</h4>
+              <div class="modal-spec-row"><span>Šifra</span><span id="modalSpecCode"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const overlay = document.getElementById('productModal');
+  requestAnimationFrame(()=>overlay.classList.add('show'));
+  history.pushState({ modalOpen:true }, '');
+
+  let disposeViewer = null;
+  let curCatIdx = catIdx, curSubIdx = subIdx, curVarIdx = variantIdx;
+  let cat, subcat;
+
+  function updateCodeDisplay(){
+    const s = subcat.sizes[curVarIdx];
+    document.getElementById('modalDims').textContent = s.dims;
+    document.getElementById('modalSpecCode').textContent = s.code;
+    const img = s.image || subcat.image || '';
+    const thumb = document.getElementById('modalVariantThumb');
+    if(thumb) thumb.src = img;
+    document.getElementById('modalMainImage').src = img;
+  }
+
+  function renderVariantPicker(){
+    const wrap = document.getElementById('modalVariantFieldWrap');
+    if(subcat.sizes.length <= 1){ wrap.innerHTML = ''; return; }
+    const img0 = subcat.sizes[0].image || subcat.image || '';
+    const optsHtml = subcat.sizes.map((s,i)=>`<div class="custom-select-option${i===0?' selected':''}" data-idx="${i}">${varNum(curCatIdx,curSubIdx,i)} ${s.dims}</div>`).join('');
+    wrap.innerHTML = `
+      <label>Dimenzije</label>
+      <div class="variant-picker-row">
+        <div class="custom-select" id="modalVariantCustom">
+          <button type="button" class="custom-select-btn" id="modalVariantBtn">${varNum(curCatIdx,curSubIdx,0)} ${subcat.sizes[0].dims}</button>
+          <div class="custom-select-list" id="modalVariantList">${optsHtml}</div>
+        </div>
+        <img class="variant-thumb" id="modalVariantThumb" src="${img0}" alt="">
+      </div>`;
+    const vCustom = document.getElementById('modalVariantCustom');
+    const vBtn = document.getElementById('modalVariantBtn');
+    const vList = document.getElementById('modalVariantList');
+    vBtn.addEventListener('click', (e)=>{ e.stopPropagation(); vCustom.classList.toggle('open'); });
+    vList.querySelectorAll('.custom-select-option').forEach(opt=>{
+      opt.addEventListener('mouseenter', ()=>{
+        const idx = Number(opt.dataset.idx);
+        const s = subcat.sizes[idx];
+        const img = s.image || subcat.image || '';
+        document.getElementById('modalMainImage').src = img;
+        document.getElementById('modalVariantThumb').src = img;
+      });
+      opt.addEventListener('click', ()=>{
+        curVarIdx = Number(opt.dataset.idx);
+        const s = subcat.sizes[curVarIdx];
+        vBtn.textContent = `${varNum(curCatIdx,curSubIdx,curVarIdx)} ${s.dims}`;
+        vList.querySelectorAll('.custom-select-option').forEach(o=>o.classList.toggle('selected', Number(o.dataset.idx)===curVarIdx));
+        updateCodeDisplay();
+        vCustom.classList.remove('open');
+      });
+    });
+    vList.addEventListener('mouseleave', updateCodeDisplay);
+  }
+
+  function render(){
+    cat = CATEGORIES[curCatIdx];
+    subcat = cat.subcats[curSubIdx];
+    const isTable = cat.id === 'stolovi';
+    curVarIdx = 0;
+
+    document.getElementById('modalCatNav').querySelectorAll('.modal-catnav-item').forEach(b=>{
+      b.classList.toggle('active', Number(b.dataset.catJump) === curCatIdx);
+    });
+
+    document.getElementById('modalEyebrow').textContent = `${catNum(curCatIdx)} ${cat.label}`;
+    const sNum = subNum(curCatIdx, curSubIdx);
+    document.getElementById('modalName').innerHTML = `<span class="num">${sNum}</span>${subcat.name}`;
+    document.getElementById('modalSubLabel').textContent = isTable ? 'Tip stola' : 'Podkategorija';
+
+    const wishKey = curCatIdx+'::'+curSubIdx;
+    const wishBtn = document.getElementById('modalWishlistBtn');
+    wishBtn.dataset.wishKey = wishKey;
+    const isWished = wishlistItems.includes(wishKey);
+    wishBtn.classList.toggle('active', isWished);
+    wishBtn.innerHTML = isWished ? icons.heartFilled : icons.heart;
+
+    const subOptionsHtml = cat.subcats.map((sc,i)=>`<div class="custom-select-option${i===curSubIdx?' selected':''}" data-idx="${i}">${subNum(curCatIdx,i)} ${sc.name}</div>`).join('');
+    const subBtn = document.getElementById('modalSubBtn');
+    const subList = document.getElementById('modalSubList');
+    subBtn.textContent = `${sNum} ${subcat.name}`;
+    subList.innerHTML = subOptionsHtml;
+    subList.querySelectorAll('.custom-select-option').forEach(opt=>{
+      opt.addEventListener('mouseenter', ()=>{
+        const idx = Number(opt.dataset.idx);
+        const previewSubcat = cat.subcats[idx];
+        const previewImg = (previewSubcat.sizes[0] && previewSubcat.sizes[0].image) || previewSubcat.image || '';
+        document.getElementById('modalMainImage').src = previewImg;
+      });
+      opt.addEventListener('click', ()=>{
+        curSubIdx = Number(opt.dataset.idx);
+        document.getElementById('modalSubCustom').classList.remove('open');
+        render();
+      });
+    });
+    subList.addEventListener('mouseleave', updateCodeDisplay);
+
+    renderVariantPicker();
+    updateCodeDisplay();
+
+    const legsWrap = document.getElementById('modalLegsFieldWrap');
+    if(isTable){
+      const legOptionsHtml = `<option value="">— bez nogara —</option>` + nogariCat.subcats.map((l,i)=>`<option value="${i}">${subNum(nogariIdx,i)} ${l.name}</option>`).join('');
+      legsWrap.innerHTML = `<label>Izbor nogara</label><select id="modalLegsSelect">${legOptionsHtml}</select>`;
+    } else {
+      legsWrap.innerHTML = '';
+    }
+
+    markActiveTreeItem(curCatIdx, curSubIdx);
+  }
+  render();
+
+  // one-time bindings (elements below persist across render() calls, so bind only once)
+  const subCustom = document.getElementById('modalSubCustom');
+  document.getElementById('modalSubBtn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    subCustom.classList.toggle('open');
+  });
+
+  document.getElementById('modalWishlistBtn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    toggleWishlist(curCatIdx+'::'+curSubIdx, e.currentTarget);
+  });
+
+  document.getElementById('modalCatNav').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.modal-catnav-item');
+    if(!btn) return;
+    curCatIdx = Number(btn.dataset.catJump);
+    curSubIdx = 0;
+    render();
+  });
+
+  function outsideClickHandler(e){
+    if(subCustom && !subCustom.contains(e.target)) subCustom.classList.remove('open');
+    const vCustom = document.getElementById('modalVariantCustom');
+    if(vCustom && !vCustom.contains(e.target)) vCustom.classList.remove('open');
+  }
+  document.addEventListener('click', outsideClickHandler);
+
+  function closeModal(fromPopState){
+    overlay.classList.remove('show');
+    if(disposeViewer) disposeViewer();
+    clearActiveTreeItem();
+    document.removeEventListener('click', outsideClickHandler);
+    window.removeEventListener('popstate', onPopState);
+    setTimeout(()=>{ modalRoot.innerHTML = ''; }, 200);
+    if(!fromPopState && history.state && history.state.modalOpen){
+      history.back();
+    }
+  }
+  function onPopState(){ closeModal(true); }
+  window.addEventListener('popstate', onPopState);
+
+  document.getElementById('modalCloseBtn').addEventListener('click', ()=>closeModal(false));
+  overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(false); });
+
+  document.getElementById('modalAddBtn').addEventListener('click', ()=>{
+    const chosenSize = subcat.sizes[curVarIdx];
+    const qtyInput = document.getElementById('modalQty');
+    const qty = Math.max(1, parseInt(qtyInput.value, 10) || 1);
+    addToCart({
+      num: varNum(curCatIdx, curSubIdx, curVarIdx),
+      subcatName: subcat.name,
+      code: chosenSize.code,
+      dims: chosenSize.dims,
+      image: chosenSize.image || subcat.image || '',
+      legsName: '',
+      qty
+    });
+    let addedMsg = subcat.name;
+    const legsSelect = document.getElementById('modalLegsSelect');
+    if(legsSelect && legsSelect.value !== ''){
+      const legIdx = Number(legsSelect.value);
+      const legSubcat = nogariCat.subcats[legIdx];
+      const legSize = legSubcat.sizes[0];
+      addToCart({
+        num: varNum(nogariIdx, legIdx, 0),
+        subcatName: legSubcat.name,
+        code: legSize.code,
+        dims: legSize.dims,
+        image: legSize.image || legSubcat.image || '',
+        legsName: '',
+        qty
+      });
+      addedMsg += ' + '+legSubcat.name;
+    }
+    showToast('Dodato u korpu: '+addedMsg+' × '+qty);
+    qtyInput.value = '1';
+  });
+}
+
+/* ---------- CARD CLICK + COMPARE DELEGATION ---------- */
+document.getElementById('catalog').addEventListener('click', (e)=>{
+  const card = e.target.closest('.product-card');
+  if(card){ openProductModal(Number(card.dataset.cat), Number(card.dataset.subidx)); }
+});
+
+/* ---------- FORM (demo submit) ---------- */
+document.getElementById('quoteForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  showToast('Upit poslat (demo)');
+  e.target.reset();
+});
+
+/* ---------- STICKY OFFSET SYNC (measures real header/subnav height, no guessing) ---------- */
+function syncHeaderOffsets(){
+  const headerEl = document.querySelector('header');
+  const subnavEl = document.querySelector('.subnav-wrap');
+  if(headerEl) document.documentElement.style.setProperty('--header-h', headerEl.offsetHeight + 'px');
+  if(subnavEl) document.documentElement.style.setProperty('--subnav-h', subnavEl.offsetHeight + 'px');
+}
+syncHeaderOffsets();
+window.addEventListener('load', syncHeaderOffsets);
+window.addEventListener('resize', syncHeaderOffsets);
+setTimeout(syncHeaderOffsets, 300);
+
+/* ---------- HERO INTERACTIVE DOT GLOW ---------- */
+(function(){
+  const hero = document.getElementById('pocetna');
+  const glow = document.getElementById('heroDotBright');
+  let targetX = -500, targetY = -500, curX = -500, curY = -500;
+  hero.addEventListener('mousemove', (e)=>{
+    const rect = hero.getBoundingClientRect();
+    targetX = e.clientX - rect.left; targetY = e.clientY - rect.top;
+    glow.style.opacity = '1';
+  });
+  hero.addEventListener('mouseleave', ()=>{ glow.style.opacity = '0'; });
+  function animateGlow(){
+    curX += (targetX - curX) * 0.15; curY += (targetY - curY) * 0.15;
+    glow.style.setProperty('--mx', curX + 'px'); glow.style.setProperty('--my', curY + 'px');
+    requestAnimationFrame(animateGlow);
+  }
+  animateGlow();
+})();
+
+/* ---------- LOADING SCREEN ---------- */
+(function(){
+  const screen = document.getElementById('loadingScreen');
+  setTimeout(()=>{ screen.classList.add('hide'); setTimeout(()=>{ screen.remove(); }, 400); }, 1200);
+})();
+</script>
+</body>
+</html>
