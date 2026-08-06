@@ -54,6 +54,16 @@
   .icon-badge{position:absolute; top:-6px; right:-6px; background:var(--accent); color:#fff; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
   .header-cart{position:relative;}
   .cart-icon-btn{background:var(--accent); border-color:var(--accent); color:#fff;}
+  @keyframes cartBounce{
+    0%{ transform:scale(1); }
+    30%{ transform:scale(1.28) rotate(-8deg); }
+    55%{ transform:scale(0.94) rotate(4deg); }
+    75%{ transform:scale(1.08) rotate(-2deg); }
+    100%{ transform:scale(1) rotate(0deg); }
+  }
+  .cart-icon-btn.bouncing{ animation:cartBounce .5s ease; }
+  .flyout-cart-list{display:flex; flex-direction:column; gap:8px; margin-bottom:12px;}
+  .cart-flyout-item{padding:8px;}
   .cart-icon-btn:hover{filter:brightness(1.08);}
   .cart-icon-btn .icon-badge{background:#fff; color:var(--accent);}
   .flyout-panel{position:absolute; top:calc(100% + 10px); right:0; width:340px; max-height:420px; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:14px; opacity:0; pointer-events:none; transform:translateY(-6px); transition:all .18s ease; z-index:60;}
@@ -475,7 +485,7 @@
           <div class="flyout-results" id="cartFlyoutContent"></div>
         </div>
       </div>
-      <a href="#ponuda" class="btn btn-accent">Zatraži ponudu</a>
+      <a href="#ponuda" class="btn btn-accent">Kontakt</a>
     </div>
   </div>
   <div class="mobile-nav-panel" id="mobileNavPanel">
@@ -515,7 +525,7 @@
   <div class="contact-grid">
     <div class="contact-info">
       <h2>Zatraži ponudu</h2>
-      <p>Pošalji nam šifru proizvoda, dimenzije i količinu — vraćamo ponudu sa cenom i rokom isporuke. Za stolove za zavarivanje možemo pripremiti i 3D model konfiguracije pre porudžbine.</p>
+      <p>Popuni polje ispod svojim upitom — šifrom, dimenzijama, količinom, ili prosto opiši šta ti treba. Ime i prezime, telefon i e-mail su obavezni; kompanija je opciona. Odgovaramo sa cenom i rokom isporuke.</p>
       <div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18M3 12h18M3 19h18"/></svg><span>PIB / matični broj — dodaj kasnije u realnom sadržaju</span></div>
       <div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.6a16 16 0 006.4 6.4l1.1-1.1a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span>+381 6X XXX XXX (placeholder)</span></div>
       <div class="quick-contact-row">
@@ -532,15 +542,14 @@
     </div>
     <form class="contact-form" id="quoteForm">
       <div class="form-row">
-        <div class="field"><label>Ime i prezime</label><input type="text" required placeholder="Marko Marković"></div>
-        <div class="field"><label>Kompanija</label><input type="text" placeholder="Naziv firme"></div>
+        <div class="field"><label>Ime i prezime</label><input type="text" name="fullname" required placeholder="Marko Marković"></div>
+        <div class="field"><label>Kompanija</label><input type="text" name="company" placeholder="Naziv firme"></div>
       </div>
       <div class="form-row">
-        <div class="field"><label>E-mail</label><input type="email" required placeholder="marko@firma.rs"></div>
-        <div class="field"><label>Telefon</label><input type="tel" placeholder="+381 ..."></div>
+        <div class="field"><label>E-mail</label><input type="email" name="email" required placeholder="marko@firma.rs"></div>
+        <div class="field"><label>Telefon</label><input type="tel" name="phone" required placeholder="+381 ..."></div>
       </div>
-      <div class="field full" style="margin-bottom:16px;"><label>Kategorija proizvoda</label><select id="categorySelect"></select></div>
-      <div class="field full" style="margin-bottom:16px;"><label>Šifra proizvoda / dimenzije / količina</label><textarea rows="3" placeholder="npr. TL350 x 4 kom, ili SWD281515 x 1"></textarea></div>
+      <div class="field full" style="margin-bottom:16px;"><label>Šifra proizvoda / dimenzije / količina</label><textarea name="message" rows="3" placeholder="npr. TL350 x 4 kom, ili SWD281515 x 1 — ili opiši svojim rečima šta ti treba"></textarea></div>
       <button type="submit" class="btn btn-accent">Pošalji upit</button>
     </form>
   </div>
@@ -591,7 +600,6 @@ function cardImageFor(subcat){ return subcat.image || (subcat.sizes[0] && subcat
 /* ---------- RENDER: PILLS + SELECT + CATALOG + SIDEBAR ---------- */
 const subnav = document.getElementById('subnav');
 const catalog = document.getElementById('catalog');
-const categorySelect = document.getElementById('categorySelect');
 const sidebarTree = document.getElementById('sidebarTree');
 const mobileNavPanel = document.getElementById('mobileNavPanel');
 const mobileCatList = document.getElementById('mobileCatList');
@@ -632,11 +640,6 @@ CATEGORIES.forEach((cat, catIdx)=>{
   railItem.title = `${cNum} ${cat.label}`;
   railItem.innerHTML = icons[cat.icon];
   mobileCatRail.appendChild(railItem);
-
-  // select option
-  const opt = document.createElement('option');
-  opt.value = cat.id; opt.textContent = `${cNum} ${cat.label}`;
-  categorySelect.appendChild(opt);
 
   // catalog section
   const section = document.createElement('section');
@@ -834,18 +837,59 @@ function showToast(msg){ toastText.textContent = msg; toast.classList.add('show'
 /* ---------- CART ---------- */
 let cartItems = [];
 const cartPanel = document.getElementById('cartPanel');
+const cartBadge = document.getElementById('cartBadge');
+const cartFlyoutContent = document.getElementById('cartFlyoutContent');
+const headerCart = document.getElementById('headerCart');
+const cartToggleBtn = document.getElementById('cartToggleBtn');
+
 function addToCart(item){
   const existing = cartItems.find(it=>it.code === item.code && it.legsName === item.legsName);
   if(existing){ existing.qty += item.qty; }
   else { cartItems.push(item); }
   renderCartPanel();
+  renderCartFlyout();
+  updateCartBadge();
+  bounceCartIcon();
 }
+function removeFromCart(idx){
+  cartItems.splice(idx, 1);
+  renderCartPanel();
+  renderCartFlyout();
+  updateCartBadge();
+}
+function updateCartBadge(){
+  const totalQty = cartItems.reduce((sum,it)=>sum+it.qty, 0);
+  cartBadge.textContent = totalQty;
+  cartBadge.style.display = totalQty > 0 ? 'flex' : 'none';
+}
+function bounceCartIcon(){
+  cartToggleBtn.classList.remove('bouncing');
+  void cartToggleBtn.offsetWidth;
+  cartToggleBtn.classList.add('bouncing');
+}
+function fillQuoteFromCart(){
+  const summary = cartItems.map(it=>`${it.num} ${it.subcatName} × ${it.qty} — ${it.code} (${it.dims})`).join('\\n');
+  document.querySelector('#quoteForm textarea').value = summary;
+}
+
+function cartItemsHtml(){
+  return cartItems.map((it,i)=>`
+    <div class="flyout-item cart-flyout-item">
+      <button class="flyout-item-remove" data-cart-remove="${i}" title="Ukloni">${icons.close}</button>
+      <img src="${it.image}" alt="">
+      <div>
+        <p class="flyout-item-name">${it.num} ${it.subcatName} ${it.qty>1?'<span class="cart-qty">× '+it.qty+'</span>':''}</p>
+        <p class="flyout-item-meta">${it.code} · ${it.dims}</p>
+      </div>
+    </div>`).join('');
+}
+
 function renderCartPanel(){
   const empty = cartItems.length === 0;
   const totalQty = cartItems.reduce((sum,it)=>sum+it.qty, 0);
   cartPanel.innerHTML = `
     <div class="cart-header"><h3>${icons.cart} Vaša lista</h3><span class="cart-count">${totalQty}</span></div>
-    ${empty ? `<p class="cart-empty">Još ništa nije izabrano. Klikni na proizvod u katalogu da ga podesiš i dodaš na listu.</p>`
+    ${empty ? `<p class="cart-empty">Još ništa nije izabrano. Klikni na proizvod u katalogu da ga podesiš i dodaš u korpu.</p>`
       : `<ul class="cart-list">${cartItems.map((it,i)=>`
           <li class="cart-item">
             <img src="${it.image}" alt="">
@@ -860,17 +904,44 @@ function renderCartPanel(){
   `;
   if(!empty){
     document.getElementById('cartSubmitBtn').addEventListener('click', ()=>{
-      const summary = cartItems.map(it=>`${it.num} ${it.subcatName} × ${it.qty} — ${it.code} (${it.dims})`).join('\\n');
-      document.querySelector('#quoteForm textarea').value = summary;
+      fillQuoteFromCart();
       document.getElementById('ponuda').scrollIntoView({behavior:'smooth'});
     });
     document.getElementById('cartPdfBtn').addEventListener('click', openPdfPreview);
   }
   cartPanel.querySelectorAll('[data-remove-idx]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ cartItems.splice(Number(btn.dataset.removeIdx), 1); renderCartPanel(); });
+    btn.addEventListener('click', ()=>removeFromCart(Number(btn.dataset.removeIdx)));
   });
 }
 renderCartPanel();
+
+function renderCartFlyout(){
+  const empty = cartItems.length === 0;
+  cartFlyoutContent.innerHTML = empty
+    ? `<p class="flyout-empty">Još ništa nije izabrano. Klikni na proizvod u katalogu da ga podesiš i dodaš u korpu.</p>`
+    : `<div class="flyout-cart-list">${cartItemsHtml()}</div>
+       <button class="btn btn-accent cart-submit" id="cartFlyoutSubmitBtn">Zatraži ponudu za listu</button>
+       <button class="btn btn-ghost cart-submit" id="cartFlyoutPdfBtn">${icons.pdf} Preuzmi PDF katalog</button>`;
+  if(!empty){
+    document.getElementById('cartFlyoutSubmitBtn').addEventListener('click', ()=>{
+      fillQuoteFromCart();
+      headerCart.classList.remove('open');
+      document.getElementById('ponuda').scrollIntoView({behavior:'smooth'});
+    });
+    document.getElementById('cartFlyoutPdfBtn').addEventListener('click', openPdfPreview);
+  }
+  cartFlyoutContent.querySelectorAll('[data-cart-remove]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); removeFromCart(Number(btn.dataset.cartRemove)); });
+  });
+}
+renderCartFlyout();
+
+cartToggleBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  document.getElementById('headerSearch').classList.remove('open');
+  document.getElementById('headerWishlist').classList.remove('open');
+  headerCart.classList.toggle('open');
+});
 
 /* ---------- PDF PREVIEW / PRINT ---------- */
 function openPdfPreview(){
@@ -1032,6 +1103,7 @@ searchToggleBtn.addEventListener('click', (e)=>{
 document.addEventListener('click', (e)=>{
   if(!headerSearch.contains(e.target)) headerSearch.classList.remove('open');
   if(!headerWishlist.contains(e.target)) headerWishlist.classList.remove('open');
+  if(!headerCart.contains(e.target)) headerCart.classList.remove('open');
 });
 
 /* ---------- 3D MODEL VIEWER (tables only) ---------- */
@@ -1349,11 +1421,31 @@ document.getElementById('catalog').addEventListener('click', (e)=>{
   if(card){ openProductModal(Number(card.dataset.cat), Number(card.dataset.subidx)); }
 });
 
-/* ---------- FORM (demo submit) ---------- */
+/* ---------- FORM (mailto submit — otvara mejl klijent sa popunjenim upitom) ---------- */
 document.getElementById('quoteForm').addEventListener('submit', (e)=>{
   e.preventDefault();
-  showToast('Upit poslat (demo)');
-  e.target.reset();
+  const form = e.target;
+  const fullname = form.fullname.value.trim();
+  const company = form.company.value.trim();
+  const email = form.email.value.trim();
+  const phone = form.phone.value.trim();
+  const message = form.message.value.trim();
+
+  const subject = `Upit za ponudu — ${fullname}`;
+  const bodyLines = [
+    `Ime i prezime: ${fullname}`,
+    company ? `Kompanija: ${company}` : null,
+    `E-mail: ${email}`,
+    `Telefon: ${phone}`,
+    '',
+    'Upit:',
+    message || '(nije uneto)'
+  ].filter(Boolean);
+  const body = bodyLines.join('\\n');
+
+  const mailtoLink = `mailto:ponude@weldcraft.rs?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailtoLink;
+  showToast('Otvara se tvoj mejl klijent sa popunjenim upitom...');
 });
 
 /* ---------- STICKY OFFSET SYNC (measures real header/subnav height, no guessing) ---------- */
