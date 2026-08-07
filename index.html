@@ -315,6 +315,7 @@
   .quick-contact-btn.wa:hover{border-color:#25D366; color:#25D366;}
   .quick-contact-btn.vb:hover{border-color:#7360F2; color:#7360F2;}
   .contact-form{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:32px;}
+  .form-note{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-dim); margin:0 0 20px; padding-bottom:16px; border-bottom:1px dashed var(--border);}
   .form-row{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;}
   .field{display:flex; flex-direction:column; gap:6px;}
   .field label{font-size:12px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
@@ -369,7 +370,7 @@
     .product-grid{grid-template-columns:repeat(2,1fr); gap:12px;}
     .flyout-panel{width:calc(100vw - 40px); right:-6px;}
     .cart-backdrop{
-      position:fixed; inset:0; background:rgba(10,9,7,.6); backdrop-filter:blur(3px); z-index:59;
+      position:fixed; inset:0; background:rgba(10,9,7,.6); backdrop-filter:blur(3px); z-index:48;
       opacity:0; pointer-events:none; transition:opacity .2s ease;
     }
     .cart-backdrop.show{opacity:1; pointer-events:auto;}
@@ -379,7 +380,11 @@
     }
     .header-cart.open .flyout-panel{transform:translate(-50%,-50%);}
     .sidebar-tree{display:none;}
-    .mobile-cat-list{border-bottom:1px solid var(--border);}
+    .mobile-menu-label{
+      font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.5px;
+      color:var(--text-dim); padding:14px 4px 4px; border-top:1px dashed var(--border);
+    }
+    .mobile-cat-list{border-bottom:1px solid var(--border); padding-left:14px;}
     .mobile-nav-panel .mobile-cat-details{border-top:1px dashed var(--border);}
     .mobile-nav-panel .mobile-cat-details:first-child{border-top:none;}
     .mobile-nav-panel .mobile-cat-details summary{
@@ -512,6 +517,7 @@
   </div>
   <div class="mobile-nav-panel" id="mobileNavPanel">
     <a href="#pocetna">Početna</a>
+    <div class="mobile-menu-label">Proizvodi</div>
     <div class="mobile-cat-list" id="mobileCatList"></div>
     <a href="galerija.html">Galerija</a>
     <a href="o-nama.html">O nama</a>
@@ -547,7 +553,7 @@
   <div class="contact-grid">
     <div class="contact-info">
       <h2>Zatraži ponudu</h2>
-      <p>Popuni polje ispod svojim upitom — šifrom, dimenzijama, količinom, ili prosto opiši šta ti treba. Ime i prezime, telefon i e-mail su obavezni; kompanija je opciona. Odgovaramo sa cenom i rokom isporuke.</p>
+      <p>Popunite polje ispod svojim upitom — šifrom, dimenzijama, količinom, ili jednostavno opišite šta vam je potrebno, i javićemo se sa ponudom. Ili još brže: dodajte proizvode u korpu, kliknite na „Zatraži ponudu za listu", unesite svoje podatke — i upit nam stiže direktno.</p>
       <div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18M3 12h18M3 19h18"/></svg><span>PIB / matični broj — dodaj kasnije u realnom sadržaju</span></div>
       <div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L8 9.6a16 16 0 006.4 6.4l1.1-1.1a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg><span>+381 6X XXX XXX (placeholder)</span></div>
       <div class="quick-contact-row">
@@ -563,6 +569,7 @@
       <div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg><span>ponude@weldcraft.rs (placeholder)</span></div>
     </div>
     <form class="contact-form" id="quoteForm">
+      <p class="form-note">Ime i prezime, telefon i e-mail su obavezni · kompanija je opciona</p>
       <div class="form-row">
         <div class="field"><label>Ime i prezime</label><input type="text" name="fullname" required placeholder="Marko Marković"></div>
         <div class="field"><label>Kompanija</label><input type="text" name="company" placeholder="Naziv firme"></div>
@@ -1056,19 +1063,27 @@ function openPdfPreview(){
 }
 
 /* ---------- WISHLIST ---------- */
-let wishlistItems = []; // array of "catIdx::subIdx" keys
+const WISHLIST_STORAGE_KEY = 'weldcraft-wishlist';
+function loadWishlist(){
+  try{ const raw = localStorage.getItem(WISHLIST_STORAGE_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; }
+}
+function saveWishlist(){ try{ localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlistItems)); }catch(e){} }
+let wishlistItems = loadWishlist(); // array of {key, catIdx, subIdx, num, subcatName, catLabel, image}
 const wishlistBadge = document.getElementById('wishlistBadge');
 const wishlistResults = document.getElementById('wishlistResults');
 const headerWishlist = document.getElementById('headerWishlist');
 const wishlistToggleBtn = document.getElementById('wishlistToggleBtn');
 
-function toggleWishlist(key, btnEl){
-  const idx = wishlistItems.indexOf(key);
+function isWishlisted(key){ return wishlistItems.some(w=>w.key===key); }
+function toggleWishlist(key, data){
+  const idx = wishlistItems.findIndex(w=>w.key===key);
   if(idx > -1){ wishlistItems.splice(idx,1); }
-  else { wishlistItems.push(key); }
+  else if(data){ wishlistItems.push(Object.assign({key}, data)); }
+  saveWishlist();
   document.querySelectorAll(`.wishlist-btn[data-wish-key="${key}"]`).forEach(b=>{
-    b.classList.toggle('active', wishlistItems.includes(key));
-    b.innerHTML = wishlistItems.includes(key) ? icons.heartFilled : icons.heart;
+    const active = isWishlisted(key);
+    b.classList.toggle('active', active);
+    b.innerHTML = active ? icons.heartFilled : icons.heart;
   });
   renderWishlistPanel();
 }
@@ -1076,21 +1091,15 @@ function renderWishlistPanel(){
   wishlistBadge.textContent = wishlistItems.length;
   wishlistBadge.style.display = wishlistItems.length > 0 ? 'flex' : 'none';
   if(wishlistItems.length === 0){
-    wishlistResults.innerHTML = `<p class="flyout-empty">Još nemaš omiljene proizvode. Klikni na ♡ na kartici proizvoda.</p>`;
+    wishlistResults.innerHTML = `<p class="flyout-empty">Još nemaš omiljene proizvode. Klikni na ♡ u prozoru proizvoda.</p>`;
     return;
   }
-  wishlistResults.innerHTML = wishlistItems.map(key=>{
-    const [catIdx, subIdx] = key.split('::').map(Number);
-    const cat = CATEGORIES[catIdx];
-    const subcat = cat.subcats[subIdx];
-    const img = cardImageFor(subcat);
-    return `
-    <div class="flyout-item" data-cat="${catIdx}" data-subidx="${subIdx}">
-      <button class="flyout-item-remove" data-wish-remove="${key}" title="Ukloni">${icons.close}</button>
-      <img src="${img}" alt="">
-      <div><p class="flyout-item-name">${subNum(catIdx,subIdx)} ${subcat.name}</p><p class="flyout-item-meta">${catNum(catIdx)} ${cat.label}</p></div>
-    </div>`;
-  }).join('');
+  wishlistResults.innerHTML = wishlistItems.map(w=>`
+    <div class="flyout-item" data-cat="${w.catIdx}" data-subidx="${w.subIdx}">
+      <button class="flyout-item-remove" data-wish-remove="${w.key}" title="Ukloni">${icons.close}</button>
+      <img src="${w.image}" alt="">
+      <div><p class="flyout-item-name">${w.num} ${w.subcatName}</p><p class="flyout-item-meta">${w.catLabel}</p></div>
+    </div>`).join('');
 }
 renderWishlistPanel();
 
@@ -1362,7 +1371,7 @@ function openProductModal(catIdx, subIdx, variantIdx){
     const wishKey = curCatIdx+'::'+curSubIdx;
     const wishBtn = document.getElementById('modalWishlistBtn');
     wishBtn.dataset.wishKey = wishKey;
-    const isWished = wishlistItems.includes(wishKey);
+    const isWished = isWishlisted(wishKey);
     wishBtn.classList.toggle('active', isWished);
     wishBtn.innerHTML = isWished ? icons.heartFilled : icons.heart;
 
@@ -1410,7 +1419,14 @@ function openProductModal(catIdx, subIdx, variantIdx){
 
   document.getElementById('modalWishlistBtn').addEventListener('click', (e)=>{
     e.stopPropagation();
-    toggleWishlist(curCatIdx+'::'+curSubIdx, e.currentTarget);
+    const key = curCatIdx+'::'+curSubIdx;
+    toggleWishlist(key, {
+      catIdx: curCatIdx, subIdx: curSubIdx,
+      num: subNum(curCatIdx, curSubIdx),
+      subcatName: subcat.name,
+      catLabel: `${catNum(curCatIdx)} ${cat.label}`,
+      image: cardImageFor(subcat)
+    });
   });
 
   document.getElementById('modalCatNav').addEventListener('click', (e)=>{
@@ -1523,6 +1539,30 @@ document.getElementById('quoteForm').addEventListener('submit', (e)=>{
       setTimeout(()=>document.getElementById('ponuda').scrollIntoView({behavior:'smooth'}), 300);
     }
   }catch(e){}
+})();
+
+/* ---------- PENDING PRODUCT OPEN (set from galerija/o-nama wishlist click) ---------- */
+(function checkPendingOpen(){
+  try{
+    const pending = localStorage.getItem('weldcraft-pending-open');
+    if(pending){
+      const data = JSON.parse(pending);
+      localStorage.removeItem('weldcraft-pending-open');
+      setTimeout(()=>openProductModal(data.catIdx, data.subIdx), 400);
+    }
+  }catch(e){}
+})();
+
+/* ---------- SEARCH QUERY FROM URL (set from galerija/o-nama search) ---------- */
+(function checkSearchQuery(){
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+  if(q){
+    searchInput.value = q;
+    renderSearchResults(q);
+    headerSearch.classList.add('open');
+    history.replaceState(null, '', window.location.pathname + window.location.hash);
+  }
 })();
 
 /* ---------- STICKY OFFSET SYNC (measures real header/subnav height, no guessing) ---------- */
