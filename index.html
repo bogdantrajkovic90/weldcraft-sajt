@@ -943,7 +943,7 @@ function renderCartPanel(){
             </div>
           </li>`).join('')}</ul>
         <button class="btn btn-accent cart-submit" id="cartSubmitBtn">Zatraži ponudu za listu</button>
-        <button class="btn btn-ghost cart-submit" id="cartPdfBtn">${icons.pdf} Preuzmi PDF katalog</button>`}
+        <button class="btn btn-ghost cart-submit" id="cartPdfBtn">${icons.pdf} Preuzmi PDF listu</button>`}
   `;
   if(!empty){
     document.getElementById('cartSubmitBtn').addEventListener('click', ()=>{
@@ -964,7 +964,7 @@ function renderCartFlyout(){
     ? `<p class="flyout-empty">Još ništa nije izabrano. Klikni na proizvod u katalogu da ga podesiš i dodaš u korpu.</p>`
     : `<div class="flyout-cart-list">${cartItemsHtml()}</div>
        <button class="btn btn-accent cart-submit" id="cartFlyoutSubmitBtn">Zatraži ponudu za listu</button>
-       <button class="btn btn-ghost cart-submit" id="cartFlyoutPdfBtn">${icons.pdf} Preuzmi PDF katalog</button>`;
+       <button class="btn btn-ghost cart-submit" id="cartFlyoutPdfBtn">${icons.pdf} Preuzmi PDF listu</button>`;
   if(!empty){
     document.getElementById('cartFlyoutSubmitBtn').addEventListener('click', ()=>{
       fillQuoteFromCart();
